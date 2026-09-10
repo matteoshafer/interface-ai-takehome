@@ -9,3 +9,9 @@ __pycache__/
 # Transient run output. Curated evidence lives under evidence/ and IS committed;
 # fresh runs land in evidence/_scratch/ and are not.
 evidence/_scratch/
+evidence/_interventions/
+
+# Demo video: the Remotion project source is committed; its deps and the
+# render cache are not. The final rendered mp4 lives in evidence/.
+demo/video/node_modules/
+demo/video/out/

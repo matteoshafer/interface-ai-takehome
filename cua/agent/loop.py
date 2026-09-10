@@ -8,12 +8,10 @@ from __future__ import annotations
 
 import time
 from dataclasses import dataclass
-from typing import Any, Callable, Optional
+from typing import Callable, Optional
 
-import anthropic
-
+from cua.agent.llm import AgentTurn, LLMClient, Transcript, build_client
 from cua.agent.prompt import SYSTEM, render_goal, render_observation
-from cua.agent.tools import TOOLS
 from cua.agent.trace import ObsBrief, ReadRecord, RunTrace, TraceStep
 from cua.evidence import RunDir
 from cua.policy.config import PolicyConfig
@@ -31,13 +29,14 @@ class AgentConfig:
     model: str = "claude-sonnet-5"
     max_steps: int = 22
     max_tokens: int = 1500
+    provider: Optional[str] = None      # None -> auto-detect from env keys
 
 
 class _Discovery:
     def __init__(self, *, goal: str, target_url: str, surface, policy: PolicyConfig,
                  redactor: Redactor, run_dir: RunDir, config: AgentConfig,
                  params_hint: Optional[dict], on_confirm: Optional[ConfirmFn],
-                 client: Optional[object] = None) -> None:
+                 llm: Optional[LLMClient] = None) -> None:
         self.goal = goal
         self.target_url = target_url
         self.s = surface
@@ -47,20 +46,30 @@ class _Discovery:
         self.cfg = config
         self.params_hint = params_hint or {}
         self.on_confirm = on_confirm
-        # `client` is injectable so the loop can be tested against a fake that
-        # mimics the SDK's response shape without hitting the network.
-        self.client = client or anthropic.Anthropic()
+        # `llm` is injectable so the loop can run against a fake in tests. A real
+        # one is built lazily (only when there's actually a model in the loop).
+        self._llm = llm
         self.trace = RunTrace(goal=goal, target=target_url, model=config.model,
                               policy_ref="", params_hint=self.params_hint)
+
+    @property
+    def llm(self) -> LLMClient:
+        if self._llm is None:
+            self._llm = build_client(provider=self.cfg.provider,
+                                     model=self.cfg.model or None,
+                                     max_tokens=self.cfg.max_tokens)
+            self.cfg.model = self._llm.model
+        return self._llm
 
     # ------------------------------------------------------------------ #
     def execute(self) -> RunTrace:
         self.s.goto(self.target_url)
-        messages: list[dict] = []
+        transcript: Transcript = []
         goal_msg = render_goal(self.goal, self.target_url, self.params_hint)
-        last_tool_id: Optional[str] = None
-        pending_result: Optional[str] = None
+        pending: Optional[tuple[str, str]] = None   # (call_id, result text)
         fps: list = []
+        self.run.event("discovery_start", provider=self.llm.name,
+                       model=self.llm.model, goal=self.goal)
 
         for step in range(1, self.cfg.max_steps + 1):
             obs = self.s.observe()
@@ -73,27 +82,28 @@ class _Discovery:
                            headings=[n.name for n in obs.nodes if n.role == "heading"])
             rendered = render_observation(obs, step=step, max_steps=self.cfg.max_steps)
 
-            if last_tool_id is not None:
-                messages.append({"role": "user", "content": [
-                    {"type": "tool_result", "tool_use_id": last_tool_id,
-                     "content": pending_result or "ok"},
-                    {"type": "text", "text": rendered},
-                ]})
-            else:
-                first = f"{goal_msg}\n\n{rendered}" if step == 1 else rendered
-                messages.append({"role": "user", "content": first})
+            if step == 1:
+                transcript.append({"role": "context",
+                                   "text": f"{goal_msg}\n\n{rendered}"})
+            elif pending is not None:
+                transcript.append({"role": "feedback", "call_id": pending[0],
+                                   "result": pending[1], "observation": rendered})
+            else:  # previous turn produced no tool call
+                transcript.append({"role": "context",
+                                   "text": "Call exactly one tool to proceed.\n\n"
+                                           + rendered})
 
-            resp = self._call(messages)
-            messages.append({"role": "assistant", "content": resp.content})
-            tu = next((b for b in resp.content if b.type == "tool_use"), None)
-            if tu is None:
-                last_tool_id, pending_result = None, None
-                messages.append({"role": "user",
-                                 "content": "Call exactly one tool to proceed."})
+            turn: AgentTurn = self.llm.converse(SYSTEM, transcript)
+            transcript.append({"role": "agent", "turn": turn})
+            if turn.usage:
+                self.run.event("model_turn", step=step, tool=turn.tool,
+                               **turn.usage)
+            if not turn.tool:
+                pending = None
                 continue
 
-            last_tool_id = tu.id
-            name, inp = tu.name, dict(tu.input or {})
+            pending = (turn.call_id, "")
+            name, inp = turn.tool, dict(turn.tool_input or {})
             ts = TraceStep(index=step, tool=name, tool_input=dict(inp),
                            intent=inp.get("why") or inp.get("reason") or "",
                            obs_before=ObsBrief.of(obs))
@@ -118,7 +128,8 @@ class _Discovery:
                 self.run.event("escalate", reason=inp.get("reason", ""), step=step)
                 break
 
-            pending_result = self._act(name, inp, obs, ts)
+            result = self._act(name, inp, obs, ts)
+            pending = (turn.call_id, result)
             self.trace.steps.append(ts)
 
             fp = (obs.url, name, inp.get("name"), inp.get("url"))
@@ -139,22 +150,6 @@ class _Discovery:
         return self.trace
 
     # ------------------------------------------------------------------ #
-    def _call(self, messages):
-        for attempt in range(4):
-            try:
-                return self.client.messages.create(
-                    model=self.cfg.model, max_tokens=self.cfg.max_tokens,
-                    system=SYSTEM, tools=TOOLS, tool_choice={"type": "any"},
-                    messages=messages)
-            except anthropic.RateLimitError:
-                time.sleep(2 ** attempt)
-            except anthropic.APIStatusError as e:
-                if e.status_code >= 500:
-                    time.sleep(2 ** attempt)
-                else:
-                    raise
-        raise RuntimeError("model call failed after retries")
-
     def _act(self, name: str, inp: dict, obs: Observation, ts: TraceStep) -> str:
         if name == "navigate":
             url = inp.get("url", "")
@@ -254,11 +249,11 @@ def run_discovery(*, goal: str, target_url: str, surface, policy: PolicyConfig,
                   redactor: Redactor, run_dir: RunDir, config: AgentConfig,
                   params_hint: Optional[dict] = None,
                   on_confirm: Optional[ConfirmFn] = None,
-                  client: Optional[object] = None) -> RunTrace:
+                  llm: Optional[LLMClient] = None) -> RunTrace:
     return _Discovery(goal=goal, target_url=target_url, surface=surface,
                       policy=policy, redactor=redactor, run_dir=run_dir,
                       config=config, params_hint=params_hint,
-                      on_confirm=on_confirm, client=client).execute()
+                      on_confirm=on_confirm, llm=llm).execute()
 
 
 def run_scripted(*, goal: str, target_url: str, surface, policy: PolicyConfig,

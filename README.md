@@ -20,7 +20,10 @@ goal ──▶ LLM discovery run ──▶ capability artifact ──▶ determi
   CDP, with screenshot + viewport-ratio coordinates as the documented fallback.
   Chosen because it's the one representation legacy apps *and* desktop apps both
   expose. See `REPORT.md`.
-- **LLM**: Claude (`claude-sonnet-5`) — used **only** for discovery.
+- **LLM**: provider-agnostic — Claude (`anthropic`), or any OpenAI-compatible
+  endpoint (**NVIDIA NIM**, OpenAI, Together, Groq, local vLLM). Used **only** for
+  discovery; the provider is auto-detected from whichever API key is set. See
+  `cua/agent/llm.py`.
 
 ## Setup
 
@@ -33,12 +36,20 @@ python -m playwright install chromium
 # ...or point at an installed Chromium-family browser (Chrome/Brave/Edge):
 export CUA_BROWSER_PATH="/Applications/Brave Browser.app/Contents/MacOS/Brave Browser"
 
-cp .env.example .env      # for the discovery run only, add ANTHROPIC_API_KEY
+cp .env.example .env      # for the discovery run only — add ONE provider key
 ```
 
-`ANTHROPIC_API_KEY` (create one at <https://console.anthropic.com> → Settings →
-API Keys) is needed **only** for `cua discover`. Replay, the catalog, the
-operator console, and the entire test suite run without it.
+`cua discover` needs an LLM API key; it auto-detects the provider from whichever
+of these is set in `.env` (override with `--provider`):
+
+| provider | key | where |
+|---|---|---|
+| `anthropic` (default) | `ANTHROPIC_API_KEY` | console.anthropic.com → API Keys |
+| `nvidia` (NVIDIA NIM — trial credits) | `NVIDIA_API_KEY` | build.nvidia.com/settings/api-keys |
+| `openai` | `OPENAI_API_KEY` | platform.openai.com/api-keys |
+
+Replay, the catalog, the operator console, and the entire test suite run without
+any key.
 
 ## Demo path
 
@@ -51,7 +62,7 @@ python -m cua.cli discover \
   --goal "look up member {{member_id}} and read their current savings balance" \
   --param member_id=100042 \
   --id lookup-savings-balance --name "Look up member savings balance" \
-  --serve-mock
+  --serve-mock                 # add --provider nvidia to force a provider
 # -> writes capabilities/lookup-savings-balance.json  + evidence/discovery-*/
 
 # 2. REPLAY — deterministic, no LLM
@@ -139,6 +150,12 @@ policies/       creditunion.yaml — the allowlist + risk + redaction config
 evidence/       discovery + replay + escalation run evidence
 demo/           scripted action lists + evidence/escalation scripts
 ```
+
+## Demo video
+
+`evidence/demo.mp4` — a ~75s walkthrough (problem → discovery → artifact →
+replay's three result shapes → escalation handoff), built with Remotion from the
+real evidence screenshots. Source + build instructions in `demo/video/`.
 
 See `REPORT.md` for the design, the schema, the determinism/error model, the
 heterogeneity & multi-tenant story, and what was deliberately cut.

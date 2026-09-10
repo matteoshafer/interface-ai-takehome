@@ -47,6 +47,13 @@ same contract (§4).
   by one function and reused for step pre/post-conditions, the success
   checkpoint, and the `detect` clause of every business outcome and recovery.
   This keeps the schema small and the replay engine uniform.
+- **Provider-agnostic discovery.** The brief makes the LLM provider a free
+  choice. `cua/agent/llm.py` is the seam: the loop keeps a neutral transcript
+  (context / agent-turn / feedback) and an adapter translates it to the
+  provider's native shape. Two adapters — `AnthropicClient` (`tool_use` blocks)
+  and `OpenAICompatClient` (`tool_calls`, covering **NVIDIA NIM**, OpenAI,
+  Together, Groq, local vLLM). The provider is auto-detected from whichever key
+  is set. Nothing else in the system knows which model ran.
 
 ## 2. Artifact schema
 
@@ -220,16 +227,17 @@ allowlist is per-app, not per-role.
 
 Deliberately not built, each at a clean, documented seam:
 
-- **The literal Anthropic network call** in `cua discover` is the one thing not
-  exercised by the test suite. Everything around it is: `tests/test_agent_loop.py`
-  runs the real loop against a fake client that returns genuine `anthropic.types`
-  objects and rejects any malformed request (params, `tool_choice`, tool list,
-  `tool_result`→`tool_use` threading), the request shape is asserted valid
-  against the installed SDK, and the LLM path is shown to compile to the same
-  artifact as the scripted path. Committed discovery evidence is generated via
-  the offline **scripted-discovery** path (`--scripted`), which drives the *same*
-  observe/act/record machinery; running `cua discover` with a key writes an
-  equivalent `evidence/discovery-*/`.
+- **The literal provider network call** in `cua discover` is the one thing not
+  exercised by the test suite. Everything around it is:
+  `tests/test_llm_adapters.py` round-trips the neutral transcript through both
+  real adapters against fake SDK clients and asserts the native request shape and
+  the parsed `AgentTurn`; `tests/test_agent_loop.py` runs the real loop with a
+  fake `LLMClient` that validates the transcript contract on every call, exercises
+  every stopping condition, and shows the LLM path compiles to the same artifact
+  as the scripted path. Committed discovery evidence is generated via the offline
+  **scripted-discovery** path (`--scripted`), which drives the *same*
+  observe/act/record machinery; running `cua discover` with any provider key set
+  writes an equivalent `evidence/discovery-*/`.
 - **Legacy-frameset and desktop surfaces**: design only (§4); `WebSurface` is the
   reference implementation.
 - **Multi-tenant**: the schema (`app_id`/`tenant_id`), the `TenantOverlay` model

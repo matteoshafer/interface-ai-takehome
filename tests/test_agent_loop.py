@@ -1,10 +1,10 @@
 """The LLM discovery loop, run for real against the live mock app with a fake
-client that returns genuine SDK response objects and validates every request.
+provider-neutral client that validates the transcript contract on every call.
 
-This proves everything in cua/agent/loop.py except the literal HTTP call to
-Anthropic: request construction, tool_choice, multi-turn tool_result threading,
-tool_use parsing, finish/escalate handling, loop detection, and that the loop
-produces the SAME capability as the offline scripted path given the same moves.
+This proves everything in cua/agent/loop.py except the provider adapters'
+native-message translation (covered by test_llm_adapters.py): transcript
+threading, tool dispatch, finish/escalate handling, loop detection, max-steps,
+and that the LLM path compiles to the SAME capability as the scripted path.
 """
 from __future__ import annotations
 
@@ -14,17 +14,16 @@ from cua.agent.loop import AgentConfig, run_discovery
 from cua.artifact.compiler import compile_capability
 from cua.evidence import RunDir
 from cua.surface.web import WebSurface
-from tests.fake_llm import FakeAnthropic
+from tests.fake_llm import FakeLLM
 
 pytestmark = pytest.mark.integration
 
 GOAL = "look up member {{member_id}} and read their current savings balance"
 HINT = {"member_id": "100042", "username": "operator", "password": "demo-pass"}
 
-# The same decisions as demo/lookup_savings_balance.script.json, expressed as
-# tool calls, so the LLM path and the scripted path must compile to the same
-# artifact. One step carries assistant prose alongside the tool call, to prove
-# the loop handles text + tool_use in one turn.
+# Same decisions as demo/lookup_savings_balance.script.json, as tool calls, so
+# the LLM path and the scripted path must compile to the same artifact. One step
+# carries assistant prose alongside the tool call.
 PLAN = [
     {"tool": "type_text", "input": {"role": "textbox", "name": "Username",
                                     "text": "operator", "why": "sign in as the operator"}},
@@ -53,12 +52,13 @@ PLAN = [
 def _run(plan, mock_base_url, policy, redactor, tmp_path, **cfg):
     s = WebSurface(headless=True)
     rd = RunDir(tmp_path / "run", redactor)
+    fake = FakeLLM(plan)
     try:
-        return run_discovery(
+        trace = run_discovery(
             goal=GOAL, target_url=f"{mock_base_url}/login", surface=s, policy=policy,
             redactor=redactor, run_dir=rd, params_hint=HINT,
-            config=AgentConfig(model="claude-sonnet-5", **cfg),
-            client=FakeAnthropic(plan)), s
+            config=AgentConfig(**cfg), llm=fake)
+        return trace, fake
     finally:
         s.close()
 
@@ -70,25 +70,12 @@ def test_loop_completes_and_extracts_outputs(mock_base_url, policy, redactor, tm
     assert trace.reads["member_status"].value.strip() == "Active"
 
 
-def test_requests_were_well_formed(mock_base_url, policy, redactor, tmp_path):
-    trace, _ = _run(PLAN, mock_base_url, policy, redactor, tmp_path)
-    # one request per plan step; the FakeAnthropic raises if any was malformed
-    client_calls = None
-    # rebuild to inspect calls (the fixture closed the surface already)
-    fake = FakeAnthropic(PLAN)
-    s = WebSurface(headless=True)
-    try:
-        run_discovery(goal=GOAL, target_url=f"{mock_base_url}/login", surface=s,
-                      policy=policy, redactor=redactor,
-                      run_dir=RunDir(tmp_path / "r2", redactor), params_hint=HINT,
-                      config=AgentConfig(model="claude-sonnet-5"), client=fake)
-    finally:
-        s.close()
-    assert len(fake.calls) == len(PLAN)
-    assert all(c["tool_choice"] == {"type": "any"} for c in fake.calls)
-    assert all(c["system"] and c["max_tokens"] and c["model"] for c in fake.calls)
-    # history grows by two turns (assistant + user tool_result) per step
-    assert [len(c["messages"]) for c in fake.calls] == [2 * k + 1 for k in range(len(PLAN))]
+def test_transcript_grows_correctly(mock_base_url, policy, redactor, tmp_path):
+    _, fake = _run(PLAN, mock_base_url, policy, redactor, tmp_path)
+    assert len(fake.seen) == len(PLAN)
+    # each call: 1 context + k*(agent + feedback) entries, k = call index
+    assert [len(t) for t in fake.seen] == [1 + 2 * k for k in range(len(PLAN))]
+    # the FakeLLM raised if any feedback mis-referenced a call_id
 
 
 def test_llm_loop_produces_same_capability_as_scripted_path(
@@ -100,7 +87,7 @@ def test_llm_loop_produces_same_capability_as_scripted_path(
                              redactor=redactor)
     a = cap.model_dump(exclude={"provenance"})
     b = capability.model_dump(exclude={"provenance"})
-    assert a == b  # the LLM path and the scripted path compile to the same artifact
+    assert a == b
 
 
 def test_loop_detection_escalates(mock_base_url, policy, redactor, tmp_path):
@@ -119,7 +106,6 @@ def test_explicit_escalate_tool(mock_base_url, policy, redactor, tmp_path):
 
 
 def test_max_steps_stops_the_loop(mock_base_url, policy, redactor, tmp_path):
-    # never calls finish; distinct navigations so loop-detection doesn't fire first
     dests = ["/", "/members?q=a", "/members?q=b", "/members?q=c", "/members?q=d",
              "/members?q=e"]
     plan = [{"tool": "navigate", "input": {"url": f"{mock_base_url}{d}", "why": f"go {d}"}}

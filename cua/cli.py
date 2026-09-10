@@ -65,7 +65,6 @@ def cmd_discover(args) -> int:
     policy = PolicyConfig.load(args.policy)
     redactor = Redactor(policy)
     target = args.target or os.environ.get("CUA_MOCKAPP_URL", "http://localhost:5050")
-    model = args.model or os.environ.get("CUA_DISCOVERY_MODEL", "claude-sonnet-5")
     params_hint = _kv(args.param)
     for k in ("username", "password"):
         env = os.environ.get(f"CUA_APP_{k.upper()}")
@@ -74,12 +73,26 @@ def cmd_discover(args) -> int:
     params_hint.setdefault("username", os.environ.get("CUA_APP_USERNAME", "operator"))
     params_hint.setdefault("password", os.environ.get("CUA_APP_PASSWORD", "demo-pass"))
 
-    if not args.scripted and not (os.environ.get("ANTHROPIC_API_KEY")
-                                 or os.environ.get("ANTHROPIC_AUTH_TOKEN")):
-        print("error: `cua discover` needs an LLM. Set ANTHROPIC_API_KEY in .env "
-              "(https://console.anthropic.com -> API Keys), or use --scripted "
-              "<actions.json> for an offline run.", file=sys.stderr)
-        return 3
+    from cua.agent.llm import PROVIDERS, detect_provider
+    provider = args.provider or detect_provider()
+    model = args.model or os.environ.get("CUA_DISCOVERY_MODEL")
+    if not args.scripted:
+        spec = PROVIDERS.get(provider)
+        if not spec:
+            print(f"error: unknown --provider {provider!r}; expected one of "
+                  f"{sorted(PROVIDERS)}", file=sys.stderr)
+            return 3
+        if not any(os.environ.get(k) for k in spec["key_env"]):
+            hint = {"anthropic": "https://console.anthropic.com -> API Keys",
+                    "nvidia": "https://build.nvidia.com/settings/api-keys",
+                    "openai": "https://platform.openai.com/api-keys"}.get(provider, "")
+            print(f"error: `cua discover` with provider {provider!r} needs one of "
+                  f"{spec['key_env']} set in .env ({hint}). "
+                  f"Or use --scripted <actions.json> for an offline run.",
+                  file=sys.stderr)
+            return 3
+        print(f" * discovery provider: {provider}"
+              f"{f' ({model})' if model else ''}")
 
     run_dir = RunDir(_run_root("discovery", args), redactor)
     mock = _maybe_mock(args)
@@ -102,7 +115,8 @@ def cmd_discover(args) -> int:
             trace = run_discovery(
                 goal=args.goal, target_url=target, surface=surface, policy=policy,
                 redactor=redactor, run_dir=run_dir,
-                config=AgentConfig(model=model, max_steps=args.max_steps),
+                config=AgentConfig(model=model or "", max_steps=args.max_steps,
+                                   provider=provider),
                 params_hint=params_hint, on_confirm=on_confirm)
     finally:
         surface.close()
@@ -249,7 +263,11 @@ def build_parser() -> argparse.ArgumentParser:
     d.add_argument("--description", default="")
     d.add_argument("--app-id", default="cu-coreadmin")
     d.add_argument("--out", default=None)
-    d.add_argument("--model", default=None)
+    d.add_argument("--provider", default=None,
+                   choices=["anthropic", "nvidia", "openai"],
+                   help="LLM provider (default: auto-detect from whichever API key is set)")
+    d.add_argument("--model", default=None,
+                   help="model id; defaults to the provider's default")
     d.add_argument("--max-steps", type=int, default=22)
     d.add_argument("--headed", action="store_true")
     d.add_argument("--serve-mock", action="store_true")

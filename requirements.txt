@@ -6,8 +6,11 @@ pyyaml>=6.0
 # Computer-use surface
 playwright>=1.44
 
-# LLM discovery run (not needed for replay / tests)
+# LLM discovery run (not needed for replay / tests).
+# anthropic for Claude; openai for any OpenAI-compatible endpoint (NVIDIA NIM,
+# OpenAI, Together, Groq, local vLLM, ...). Install whichever provider you use.
 anthropic>=0.40
+openai>=1.40
 
 # Mock target app + operator console
 flask>=3.0
