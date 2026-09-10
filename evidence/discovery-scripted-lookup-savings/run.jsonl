@@ -1,9 +1,0 @@
-{"t_ms": 2113, "kind": "observe", "step": 1, "url": "http://localhost:5050/login?expired=1", "title": "MeridianCU CoreAdmin", "dialog": null, "scripted": true}
-{"t_ms": 2151, "kind": "observe", "step": 2, "url": "http://localhost:5050/login?expired=1", "title": "MeridianCU CoreAdmin", "dialog": null, "scripted": true}
-{"t_ms": 2200, "kind": "observe", "step": 3, "url": "http://localhost:5050/login?expired=1", "title": "MeridianCU CoreAdmin", "dialog": null, "scripted": true}
-{"t_ms": 2822, "kind": "observe", "step": 4, "url": "http://localhost:5050/", "title": "MeridianCU CoreAdmin", "dialog": null, "scripted": true}
-{"t_ms": 2885, "kind": "observe", "step": 5, "url": "http://localhost:5050/", "title": "MeridianCU CoreAdmin", "dialog": null, "scripted": true}
-{"t_ms": 3505, "kind": "observe", "step": 6, "url": "http://localhost:5050/members?q=100042", "title": "MeridianCU CoreAdmin", "dialog": null, "scripted": true}
-{"t_ms": 4124, "kind": "observe", "step": 7, "url": "http://localhost:5050/member/100042", "title": "Jordan Rivera -- MeridianCU CoreAdmin", "dialog": null, "scripted": true}
-{"t_ms": 4169, "kind": "observe", "step": 8, "url": "http://localhost:5050/member/100042", "title": "Jordan Rivera -- MeridianCU CoreAdmin", "dialog": null, "scripted": true}
-{"t_ms": 4202, "kind": "observe", "step": 9, "url": "http://localhost:5050/member/100042", "title": "Jordan Rivera -- MeridianCU CoreAdmin", "dialog": null, "scripted": true}

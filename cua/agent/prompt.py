@@ -14,8 +14,11 @@ quoted name shown there. Never guess a control that isn't listed.
 - One tool call per turn. After each action you receive the new OBSERVATION.
 - To move forward you usually: search for a record, open it, read or enter data, \
 reach a confirmation screen.
-- If the goal asks you to READ a value (a balance, a status), use read_value and \
-give it a short snake_case label. Collect every value the goal asks for.
+- If the goal asks you to READ a value (a balance, a status), you MUST capture \
+it with the read_value tool (one call per value, each with a short snake_case \
+label) -- do NOT just report it in the finish summary. read_value is what makes \
+the value replayable. Never put a value in finish's `outputs` that you did not \
+first capture with read_value.
 - Some actions are risky / irreversible (creating an account, posting a \
 transaction, transferring funds). Do NOT perform them. Reaching the confirmation \
 screen IS the goal; stop there and call finish.
@@ -30,10 +33,20 @@ Be decisive and brief. You have a limited number of steps."""
 def render_goal(goal: str, target: str, params_hint: dict | None) -> str:
     lines = [f"GOAL: {goal}", f"TARGET APPLICATION: {target}"]
     if params_hint:
-        shown = {k: ("<provided>" if k in ("password", "username") else v)
-                 for k, v in params_hint.items()}
-        lines.append(f"INPUTS AVAILABLE TO YOU: {shown}")
-        lines.append("When a field needs one of these inputs, type that exact value.")
+        creds = {k: params_hint[k] for k in ("username", "password")
+                 if k in params_hint}
+        task = {k: v for k, v in params_hint.items()
+                if k not in ("username", "password")}
+        if creds:
+            lines.append(
+                "LOGIN: on the sign-in screen only, type the operator username "
+                f"{creds.get('username', '')!r} into the Username field and the "
+                f"operator password {creds.get('password', '')!r} into the "
+                "Password field. These are NOT the task inputs below.")
+        if task:
+            lines.append(f"TASK INPUTS: {task}")
+            lines.append("When a form field needs one of the task inputs, type "
+                         "that exact value. Do not use a task input for login.")
     return "\n".join(lines)
 
 

@@ -227,17 +227,24 @@ allowlist is per-app, not per-role.
 
 Deliberately not built, each at a clean, documented seam:
 
-- **The literal provider network call** in `cua discover` is the one thing not
-  exercised by the test suite. Everything around it is:
-  `tests/test_llm_adapters.py` round-trips the neutral transcript through both
-  real adapters against fake SDK clients and asserts the native request shape and
-  the parsed `AgentTurn`; `tests/test_agent_loop.py` runs the real loop with a
-  fake `LLMClient` that validates the transcript contract on every call, exercises
+- **The second capability's discovery.** `lookup-savings-balance` is a **real
+  LLM run** — `deepseek-ai/deepseek-v4-pro-0813` via NVIDIA NIM, evidence in
+  `evidence/discovery-lookup-savings/`, and the resulting artifact replays green
+  across all eight scenarios. `open-savings-subaccount` (the risky-step safety
+  demo, 12+ steps) is recorded via the offline **scripted-discovery** path
+  instead — the free-tier model is rate-limited enough that a long run there is
+  flaky, and the scripted path drives the *identical* observe/act/record
+  machinery. Everything not covered by the one real run is covered by tests:
+  `tests/test_llm_adapters.py` round-trips the transcript through both provider
+  adapters against fake SDK clients; `tests/test_agent_loop.py` runs the real
+  loop with a fake `LLMClient` that validates the transcript contract, exercises
   every stopping condition, and shows the LLM path compiles to the same artifact
-  as the scripted path. Committed discovery evidence is generated via the offline
-  **scripted-discovery** path (`--scripted`), which drives the *same*
-  observe/act/record machinery; running `cua discover` with any provider key set
-  writes an equivalent `evidence/discovery-*/`.
+  as the scripted path.
+- **Model quirks are left in, not hand-fixed.** The DeepSeek run clicked *Search*
+  once before entering the query, then navigated straight to
+  `/members?q={{ member_id }}` — a redundant step and a clever recovery. The
+  compiler recorded the path faithfully; replay verifies it. Curating it away
+  would have made the artifact look better and the demonstration less honest.
 - **Legacy-frameset and desktop surfaces**: design only (§4); `WebSurface` is the
   reference implementation.
 - **Multi-tenant**: the schema (`app_id`/`tenant_id`), the `TenantOverlay` model

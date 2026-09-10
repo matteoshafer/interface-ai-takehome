@@ -116,20 +116,23 @@ python -m cua.cli catalog --invoke lookup-savings-balance --param member_id=1000
 **never** the LLM. The test suite runs the mock app in-process too:
 
 ```bash
-pytest -m "not integration"     # 24 unit tests, no browser (~0.5s)
+pytest -m "not integration"     # 28 unit tests, no browser (~0.5s)
 pytest -m integration           # 21 tests, needs a browser (~90s)
 ```
 
-`tests/test_agent_loop.py` runs the **real discovery loop** end to end against a
-fake Anthropic client that returns genuine `anthropic.types` response objects and
-validates every outgoing request (params, `tool_choice`, tool list, `tool_result`
-threading) — and asserts the LLM path compiles to the *same* artifact as the
-scripted path. The only thing it can't cover is the literal network call.
+`tests/test_llm_adapters.py` round-trips the neutral transcript through both real
+provider adapters against fake SDK clients (native request shape + response
+parse). `tests/test_agent_loop.py` runs the **real discovery loop** end to end
+against a fake `LLMClient` that validates the transcript contract on every call,
+exercises every stopping condition, and asserts the LLM path compiles to the
+*same* artifact as the scripted path. The only thing not covered is the literal
+provider network call.
 
-`demo/make_evidence.sh` regenerates everything under `evidence/` using the
-offline **scripted-discovery** path (`cua discover --scripted <actions.json>`) so
-the whole flow is reproducible with no API key; swap in the real `cua discover`
-above to produce the LLM discovery evidence.
+`demo/make_evidence.sh` regenerates everything under `evidence/`. If a provider
+key is set it does a **real `cua discover` run** for `lookup-savings-balance`
+(the committed evidence was produced this way — `deepseek-ai/deepseek-v4-pro-0813`
+via NVIDIA NIM); otherwise it falls back to the offline **scripted-discovery**
+path. Both drive the identical observe/act/record machinery.
 
 ## Layout
 

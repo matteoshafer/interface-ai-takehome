@@ -156,7 +156,7 @@ def test_build_client_selects_provider_from_env(monkeypatch):
     monkeypatch.setenv("NVIDIA_API_KEY", "nvapi-test")
     c = build_client()
     assert isinstance(c, OpenAICompatClient)
-    assert c.model == "meta/llama-3.3-70b-instruct"
+    assert c.model == "deepseek-ai/deepseek-v4-pro-0813"  # nvidia default
 
 
 def test_build_client_forced_provider_without_key_errors(monkeypatch):

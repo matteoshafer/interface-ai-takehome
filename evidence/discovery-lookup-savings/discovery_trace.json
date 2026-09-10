@@ -1,32 +1,31 @@
 {
   "goal": "look up member {{member_id}} and read their current savings balance",
   "target": "http://localhost:5050",
-  "model": "scripted",
+  "model": "deepseek-ai/deepseek-v4-pro-0813",
   "policy_ref": "",
   "params_hint": {
     "member_id": "100042",
     "username": "<secret>",
     "password": "<redacted:bcd20137>"
   },
-  "started_at": 1788936395.6569269,
-  "finished_at": 1788936398.340536,
+  "started_at": 1789026787.1495628,
+  "finished_at": 1789027740.938962,
   "outcome": "success",
-  "summary": "Signed in, searched member 100042, opened the record, read the savings balance and status.",
+  "summary": "Member 100042 (Jordan Rivera) savings balance is $4215.67.",
   "outputs": {
-    "savings_balance": "$4215.67",
-    "member_status": "Active"
+    "savings_balance": "$4215.67"
   },
   "escalation": null,
   "steps": [
     {
       "index": 1,
       "tool": "type_text",
-      "intent": "sign in as the operator",
+      "intent": "enter operator username",
       "target": "textbox:Username",
       "tool_input": {
         "role": "textbox",
         "name": "Username",
-        "why": "sign in as the operator",
+        "why": "enter operator username",
         "text": "<redacted>"
       },
       "resolved": true,
@@ -51,12 +50,12 @@
     {
       "index": 2,
       "tool": "type_text",
-      "intent": "enter the operator password",
+      "intent": "enter operator password",
       "target": "textbox:Password",
       "tool_input": {
         "role": "textbox",
         "name": "Password",
-        "why": "enter the operator password",
+        "why": "enter operator password",
         "text": "<redacted>"
       },
       "resolved": true,
@@ -81,12 +80,12 @@
     {
       "index": 3,
       "tool": "click",
-      "intent": "submit the login form",
+      "intent": "submit login",
       "target": "button:Sign in",
       "tool_input": {
         "role": "button",
         "name": "Sign in",
-        "why": "submit the login form"
+        "why": "submit login"
       },
       "resolved": true,
       "matched_strategy": "role_name",
@@ -109,12 +108,12 @@
     {
       "index": 4,
       "tool": "type_text",
-      "intent": "search for the member by id",
+      "intent": "search for member by ID",
       "target": "textbox:Member ID or name",
       "tool_input": {
         "role": "textbox",
         "name": "Member ID or name",
-        "why": "search for the member by id",
+        "why": "search for member by ID",
         "text": "<redacted>"
       },
       "resolved": true,
@@ -138,12 +137,12 @@
     {
       "index": 5,
       "tool": "click",
-      "intent": "run the member search",
+      "intent": "search for member 100042",
       "target": "button:Search",
       "tool_input": {
         "role": "button",
         "name": "Search",
-        "why": "run the member search"
+        "why": "search for member 100042"
       },
       "resolved": true,
       "matched_strategy": "role_name",
@@ -165,12 +164,12 @@
     {
       "index": 6,
       "tool": "click",
-      "intent": "open the matching member record",
+      "intent": "open member 100042",
       "target": "link:Open",
       "tool_input": {
         "role": "link",
         "name": "Open",
-        "why": "open the matching member record"
+        "why": "open member 100042"
       },
       "resolved": true,
       "matched_strategy": "role_name",
@@ -193,13 +192,13 @@
     {
       "index": 7,
       "tool": "read_value",
-      "intent": "read the current savings balance",
+      "intent": "read savings balance",
       "target": "cell:$4215.67",
       "tool_input": {
         "label": "savings_balance",
         "role": "cell",
         "name": "$4215.67",
-        "why": "read the current savings balance"
+        "why": "read savings balance"
       },
       "resolved": true,
       "matched_strategy": "cell_at",
@@ -222,16 +221,16 @@
     {
       "index": 8,
       "tool": "read_value",
-      "intent": "note the member account status",
-      "target": "cell:Active",
+      "intent": "read savings balance",
+      "target": "cell:$4215.67",
       "tool_input": {
-        "label": "member_status",
+        "label": "savings_balance",
         "role": "cell",
-        "name": "Active",
-        "why": "note the member account status"
+        "name": "$4215.67",
+        "why": "read savings balance"
       },
       "resolved": true,
-      "matched_strategy": "role_name",
+      "matched_strategy": "cell_at",
       "strategy_index": 0,
       "policy_decision": "allow",
       "error": null,
@@ -254,8 +253,10 @@
       "intent": "",
       "target": null,
       "tool_input": {
-        "summary": "Signed in, searched member 100042, opened the record, read the savings balance and status.",
-        "outputs": {}
+        "outputs": {
+          "savings_balance": "$4215.67"
+        },
+        "summary": "Member 100042 (Jordan Rivera) savings balance is $4215.67."
       },
       "resolved": false,
       "matched_strategy": null,

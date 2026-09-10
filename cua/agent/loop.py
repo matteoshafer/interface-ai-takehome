@@ -49,6 +49,7 @@ class _Discovery:
         # `llm` is injectable so the loop can run against a fake in tests. A real
         # one is built lazily (only when there's actually a model in the loop).
         self._llm = llm
+        self._finish_bounces = 0
         self.trace = RunTrace(goal=goal, target=target_url, model=config.model,
                               policy_ref="", params_hint=self.params_hint)
 
@@ -109,9 +110,22 @@ class _Discovery:
                            obs_before=ObsBrief.of(obs))
 
             if name == "finish":
+                claimed = inp.get("outputs") or {}
+                # a value in `outputs` that was never captured with read_value has
+                # no stable locator -> replay can't reproduce it. Bounce it back.
+                missing = [k for k in claimed if k not in self.trace.reads]
+                if missing and self._finish_bounces < 2:
+                    self._finish_bounces += 1
+                    pending = (turn.call_id,
+                               f"Not finished: {missing} were put in outputs but "
+                               f"never captured with read_value. Call read_value "
+                               f"for each of those values first (give each a "
+                               f"snake_case label), THEN call finish.")
+                    self.run.event("finish_bounced", missing=missing)
+                    continue
                 self.trace.outcome = "success"
-                self.trace.outputs = inp.get("outputs") or {
-                    k: v.value for k, v in self.trace.reads.items()}
+                self.trace.outputs = {k: v.value for k, v in self.trace.reads.items()} \
+                    or claimed
                 self.trace.summary = inp.get("summary", "")
                 self.trace.steps.append(ts)
                 self.run.event("finish", summary=self.trace.summary,

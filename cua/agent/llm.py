@@ -175,20 +175,31 @@ class OpenAICompatClient:
     def converse(self, system: str, transcript: Transcript) -> AgentTurn:
         import openai
         last: Exception | None = None
-        for attempt in range(4):
+        for attempt in range(6):
             try:
                 resp = self._c.chat.completions.create(
                     model=self.model, max_tokens=self.max_tokens,
                     messages=self._messages(system, transcript),
                     tools=_openai_tools(), tool_choice=self._tool_choice)
                 break
-            except (openai.RateLimitError, openai.APIStatusError) as e:
+            except (openai.RateLimitError, openai.APIStatusError,
+                    openai.APIConnectionError) as e:
                 last = e
                 code = getattr(e, "status_code", 500) or 500
-                if isinstance(e, openai.RateLimitError) or code >= 500:
-                    time.sleep(2 ** attempt)
-                else:
+                retryable = (isinstance(e, (openai.RateLimitError,
+                                            openai.APIConnectionError))
+                             or code == 429 or code >= 500)
+                if not retryable:
                     raise
+                # honour Retry-After when the provider sends it (free tiers do)
+                wait = None
+                resp_obj = getattr(e, "response", None)
+                if resp_obj is not None:
+                    try:
+                        wait = float(resp_obj.headers.get("retry-after", ""))
+                    except (TypeError, ValueError):
+                        wait = None
+                time.sleep(wait if wait else min(60, 5 * 2 ** attempt))
         else:
             raise RuntimeError(f"openai-compat call failed after retries: {last}")
 
@@ -221,7 +232,8 @@ PROVIDERS = {
         "key_env": ["ANTHROPIC_API_KEY", "ANTHROPIC_AUTH_TOKEN"],
     },
     "nvidia": {
-        "default_model": "meta/llama-3.3-70b-instruct",
+        # a current NVIDIA-hosted model with reliable function calling
+        "default_model": "deepseek-ai/deepseek-v4-pro-0813",
         "key_env": ["NVIDIA_API_KEY"],
         "base_url": _NVIDIA_BASE,
     },

@@ -3,7 +3,7 @@
   "id": "lookup-savings-balance",
   "version": "0.1.0",
   "name": "Look up member savings balance",
-  "description": "Sign in, look up a member by id, open the record, and read the current savings balance and account status.",
+  "description": "Sign in, look up a member by id, open the record, and read the current savings balance.",
   "target": {
     "surface_type": "web",
     "app_id": "cu-coreadmin",
@@ -48,7 +48,7 @@
       "name": "savings_balance",
       "type": "number",
       "description": "Value at the 'Current balance' column of the 'Savings' row.",
-      "source_step": "s07_read_the_current_savings",
+      "source_step": "s08_read_savings_balance",
       "read": {
         "target": {
           "strategies": [
@@ -83,46 +83,12 @@
         "cast": "number"
       },
       "sensitivity": "none"
-    },
-    {
-      "name": "member_status",
-      "type": "string",
-      "description": "Value in the 'Status' row.",
-      "source_step": "s08_note_the_member_account",
-      "read": {
-        "target": {
-          "strategies": [
-            {
-              "kind": "role_name",
-              "role": "cell",
-              "name": "Active",
-              "exact": true,
-              "nth": 0
-            },
-            {
-              "kind": "anchor",
-              "anchor_text": "Status",
-              "control_role": "cell",
-              "control_name": null
-            },
-            {
-              "kind": "text",
-              "text": "Active",
-              "role": "cell"
-            }
-          ],
-          "rationale": "Primary: accessibility role 'cell' + name 'Active' -- stable across restyle/markup changes and matches what an operator sees. Fallback: the labelling text, for legacy rows where inputs share a role and carry no name. Last resort: viewport-fraction click point, valid only while the layout is fixed."
-        },
-        "extract": null,
-        "cast": "string"
-      },
-      "sensitivity": "none"
     }
   ],
   "steps": [
     {
-      "id": "s01_sign_in_as_the_operator",
-      "intent": "sign in as the operator",
+      "id": "s01_enter_operator_username",
+      "intent": "enter operator username",
       "action": {
         "type": "type",
         "value_ref": "{{ username }}",
@@ -179,8 +145,8 @@
       "timeout_ms": 8000
     },
     {
-      "id": "s02_enter_the_operator_passw",
-      "intent": "enter the operator password",
+      "id": "s02_enter_operator_password",
+      "intent": "enter operator password",
       "action": {
         "type": "type",
         "value_ref": "{{ password }}",
@@ -237,8 +203,8 @@
       "timeout_ms": 8000
     },
     {
-      "id": "s03_submit_the_login_form",
-      "intent": "submit the login form",
+      "id": "s03_submit_login",
+      "intent": "submit login",
       "action": {
         "type": "click",
         "value_ref": null,
@@ -289,8 +255,8 @@
       "timeout_ms": 8000
     },
     {
-      "id": "s04_search_for_the_member_by",
-      "intent": "search for the member by id",
+      "id": "s04_search_for_member_by_id",
+      "intent": "search for member by ID",
       "action": {
         "type": "type",
         "value_ref": "{{ member_id }}",
@@ -347,8 +313,8 @@
       "timeout_ms": 8000
     },
     {
-      "id": "s05_run_the_member_search",
-      "intent": "run the member search",
+      "id": "s05_search_for_member_100042",
+      "intent": "search for member 100042",
       "action": {
         "type": "click",
         "value_ref": null,
@@ -399,8 +365,8 @@
       "timeout_ms": 8000
     },
     {
-      "id": "s06_open_the_matching_member",
-      "intent": "open the matching member record",
+      "id": "s06_open_member_100042",
+      "intent": "open member 100042",
       "action": {
         "type": "click",
         "value_ref": null,
@@ -457,8 +423,8 @@
       "timeout_ms": 8000
     },
     {
-      "id": "s07_read_the_current_savings",
-      "intent": "read the current savings balance",
+      "id": "s07_read_savings_balance",
+      "intent": "read savings balance",
       "action": {
         "type": "read",
         "value_ref": null,
@@ -521,8 +487,8 @@
       "timeout_ms": 8000
     },
     {
-      "id": "s08_note_the_member_account",
-      "intent": "note the member account status",
+      "id": "s08_read_savings_balance",
+      "intent": "read savings balance",
       "action": {
         "type": "read",
         "value_ref": null,
@@ -532,33 +498,39 @@
       "target": {
         "strategies": [
           {
+            "kind": "cell_at",
+            "row_anchor": "Savings",
+            "column_header": "Current balance",
+            "contains": null
+          },
+          {
             "kind": "role_name",
             "role": "cell",
-            "name": "Active",
+            "name": "$4215.67",
             "exact": true,
             "nth": 0
           },
           {
             "kind": "anchor",
-            "anchor_text": "Status",
+            "anchor_text": "Savings",
             "control_role": "cell",
             "control_name": null
           },
           {
             "kind": "text",
-            "text": "Active",
+            "text": "$4215.67",
             "role": "cell"
           },
           {
             "kind": "bbox_ratio",
-            "x": 0.1303,
-            "y": 0.256,
+            "x": 0.2299,
+            "y": 0.4227,
             "note": "viewport-fraction fallback captured at record time"
           }
         ],
-        "rationale": "Primary: accessibility role 'cell' + name 'Active' -- stable across restyle/markup changes and matches what an operator sees. Fallback: the labelling text, for legacy rows where inputs share a role and carry no name. Last resort: viewport-fraction click point, valid only while the layout is fixed."
+        "rationale": "Primary: accessibility role 'cell' + name '$4215.67' -- stable across restyle/markup changes and matches what an operator sees. Fallback: the labelling text, for legacy rows where inputs share a role and carry no name. Last resort: viewport-fraction click point, valid only while the layout is fixed."
       },
-      "target_rationale": "Primary: accessibility role 'cell' + name 'Active' -- stable across restyle/markup changes and matches what an operator sees. Fallback: the labelling text, for legacy rows where inputs share a role and carry no name. Last resort: viewport-fraction click point, valid only while the layout is fixed.",
+      "target_rationale": "Primary: accessibility role 'cell' + name '$4215.67' -- stable across restyle/markup changes and matches what an operator sees. Fallback: the labelling text, for legacy rows where inputs share a role and carry no name. Last resort: viewport-fraction click point, valid only while the layout is fixed.",
       "risk": "safe",
       "phase": "main",
       "pre": null,
@@ -722,9 +694,9 @@
     "note": ""
   },
   "provenance": {
-    "discovered_by_model": "scripted",
-    "discovered_at": "2026-09-09T06:46:38+00:00",
-    "trace_hash": "628d4d817194e0b3f81158ac2c5906832e1091ca18a971c478a6419671723bee",
+    "discovered_by_model": "deepseek-ai/deepseek-v4-pro-0813",
+    "discovered_at": "2026-09-10T08:09:01+00:00",
+    "trace_hash": "72375da572ed9a671229baf32c10454884b5fec940ecfd0e908ca86b0b67a56f",
     "raw_step_count": 9,
     "stability": null
   }

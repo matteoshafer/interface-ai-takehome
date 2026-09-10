@@ -1,9 +1,9 @@
 {
   "schema_version": "1.0",
-  "id": "open-savings-subaccount",
+  "id": "lookup-savings-balance",
   "version": "0.1.0",
-  "name": "Open a Savings sub-account",
-  "description": "Sign in, open a new Savings sub-account for a member with a given opening deposit, and confirm creation.",
+  "name": "Look up member savings balance",
+  "description": "Sign in, look up a member by id, open the record, and read the current savings balance.",
   "target": {
     "surface_type": "web",
     "app_id": "cu-coreadmin",
@@ -23,15 +23,6 @@
       "description": "Input 'member_id' for this capability.",
       "sensitivity": "pii",
       "example": "100042"
-    },
-    {
-      "name": "deposit",
-      "type": "string",
-      "required": true,
-      "pattern": null,
-      "description": "Input 'deposit' for this capability.",
-      "sensitivity": "none",
-      "example": "250.00"
     },
     {
       "name": "username",
@@ -54,54 +45,50 @@
   ],
   "outputs": [
     {
-      "name": "new_account_number",
-      "type": "string",
-      "description": "Value in the 'New account number' row.",
-      "source_step": "s11_read_the_account_number",
+      "name": "savings_balance",
+      "type": "number",
+      "description": "Value at the 'Current balance' column of the 'Savings' row.",
+      "source_step": "s08_read_savings_balance",
       "read": {
         "target": {
           "strategies": [
             {
-              "kind": "anchor",
-              "anchor_text": "New account number",
-              "control_role": "cell",
-              "control_name": null
-            }
-          ],
-          "rationale": "Primary: accessibility role 'cell' + name '<redacted:e2e3368d>' -- stable across restyle/markup changes and matches what an operator sees. Fallback: the labelling text, for legacy rows where inputs share a role and carry no name. Last resort: viewport-fraction click point, valid only while the layout is fixed."
-        },
-        "extract": null,
-        "cast": "string"
-      },
-      "sensitivity": "pii"
-    },
-    {
-      "name": "created_account_number",
-      "type": "string",
-      "description": "Value in the 'New account number' row.",
-      "source_step": "s13_verify_the_account_numbe",
-      "read": {
-        "target": {
-          "strategies": [
+              "kind": "cell_at",
+              "row_anchor": "Savings",
+              "column_header": "Current balance",
+              "contains": null
+            },
+            {
+              "kind": "role_name",
+              "role": "cell",
+              "name": "$4215.67",
+              "exact": true,
+              "nth": 0
+            },
             {
               "kind": "anchor",
-              "anchor_text": "New account number",
+              "anchor_text": "Savings",
               "control_role": "cell",
               "control_name": null
+            },
+            {
+              "kind": "text",
+              "text": "$4215.67",
+              "role": "cell"
             }
           ],
-          "rationale": "Primary: accessibility role 'cell' + name '<redacted:e2e3368d>' -- stable across restyle/markup changes and matches what an operator sees. Fallback: the labelling text, for legacy rows where inputs share a role and carry no name. Last resort: viewport-fraction click point, valid only while the layout is fixed."
+          "rationale": "Primary: accessibility role 'cell' + name '$4215.67' -- stable across restyle/markup changes and matches what an operator sees. Fallback: the labelling text, for legacy rows where inputs share a role and carry no name. Last resort: viewport-fraction click point, valid only while the layout is fixed."
         },
-        "extract": null,
-        "cast": "string"
+        "extract": "([\\d,]+\\.?\\d*)",
+        "cast": "number"
       },
-      "sensitivity": "pii"
+      "sensitivity": "none"
     }
   ],
   "steps": [
     {
-      "id": "s01_sign_in_as_the_operator",
-      "intent": "sign in as the operator",
+      "id": "s01_enter_operator_username",
+      "intent": "enter operator username",
       "action": {
         "type": "type",
         "value_ref": "{{ username }}",
@@ -158,8 +145,8 @@
       "timeout_ms": 8000
     },
     {
-      "id": "s02_enter_the_operator_passw",
-      "intent": "enter the operator password",
+      "id": "s02_enter_operator_password",
+      "intent": "enter operator password",
       "action": {
         "type": "type",
         "value_ref": "{{ password }}",
@@ -216,8 +203,8 @@
       "timeout_ms": 8000
     },
     {
-      "id": "s03_submit_the_login_form",
-      "intent": "submit the login form",
+      "id": "s03_submit_login",
+      "intent": "submit login",
       "action": {
         "type": "click",
         "value_ref": null,
@@ -268,8 +255,8 @@
       "timeout_ms": 8000
     },
     {
-      "id": "s04_search_for_the_member_by",
-      "intent": "search for the member by id",
+      "id": "s04_search_for_member_by_id",
+      "intent": "search for member by ID",
       "action": {
         "type": "type",
         "value_ref": "{{ member_id }}",
@@ -326,8 +313,8 @@
       "timeout_ms": 8000
     },
     {
-      "id": "s05_run_the_member_search",
-      "intent": "run the member search",
+      "id": "s05_search_for_member_100042",
+      "intent": "search for member 100042",
       "action": {
         "type": "click",
         "value_ref": null,
@@ -378,8 +365,8 @@
       "timeout_ms": 8000
     },
     {
-      "id": "s06_open_the_matching_member",
-      "intent": "open the matching member record",
+      "id": "s06_open_member_100042",
+      "intent": "open member 100042",
       "action": {
         "type": "click",
         "value_ref": null,
@@ -436,228 +423,8 @@
       "timeout_ms": 8000
     },
     {
-      "id": "s07_start_the_new_sub_accoun",
-      "intent": "start the new sub-account form",
-      "action": {
-        "type": "click",
-        "value_ref": null,
-        "key": null,
-        "ms": null
-      },
-      "target": {
-        "strategies": [
-          {
-            "kind": "role_name",
-            "role": "link",
-            "name": "Open a sub-account",
-            "exact": true,
-            "nth": 0
-          },
-          {
-            "kind": "text",
-            "text": "Open a sub-account",
-            "role": "link"
-          },
-          {
-            "kind": "bbox_ratio",
-            "x": 0.0715,
-            "y": 0.4952,
-            "note": "viewport-fraction fallback captured at record time"
-          }
-        ],
-        "rationale": "Primary: accessibility role 'link' + name 'Open a sub-account' -- stable across restyle/markup changes and matches what an operator sees. Fallback: the labelling text, for legacy rows where inputs share a role and carry no name. Last resort: viewport-fraction click point, valid only while the layout is fixed."
-      },
-      "target_rationale": "Primary: accessibility role 'link' + name 'Open a sub-account' -- stable across restyle/markup changes and matches what an operator sees. Fallback: the labelling text, for legacy rows where inputs share a role and carry no name. Last resort: viewport-fraction click point, valid only while the layout is fixed.",
-      "risk": "safe",
-      "phase": "main",
-      "pre": null,
-      "post": {
-        "kind": "all_of",
-        "of": [
-          {
-            "kind": "url_matches",
-            "pattern": "^/member/\\d+/subaccount/new(\\?|$)"
-          },
-          {
-            "kind": "ax_present",
-            "role": "heading",
-            "name_matches": "^Open\\ a\\ sub\\-account"
-          }
-        ]
-      },
-      "timeout_ms": 8000
-    },
-    {
-      "id": "s08_choose_the_account_type",
-      "intent": "choose the account type",
-      "action": {
-        "type": "select",
-        "value_ref": "Savings",
-        "key": null,
-        "ms": null
-      },
-      "target": {
-        "strategies": [
-          {
-            "kind": "role_name",
-            "role": "combobox",
-            "name": "Account type",
-            "exact": true,
-            "nth": 0
-          },
-          {
-            "kind": "anchor",
-            "anchor_text": "Account type",
-            "control_role": "combobox",
-            "control_name": null
-          },
-          {
-            "kind": "text",
-            "text": "Account type",
-            "role": "combobox"
-          },
-          {
-            "kind": "bbox_ratio",
-            "x": 0.1899,
-            "y": 0.1966,
-            "note": "viewport-fraction fallback captured at record time"
-          }
-        ],
-        "rationale": "Primary: accessibility role 'combobox' + name 'Account type' -- stable across restyle/markup changes and matches what an operator sees. Fallback: the labelling text, for legacy rows where inputs share a role and carry no name. Last resort: viewport-fraction click point, valid only while the layout is fixed."
-      },
-      "target_rationale": "Primary: accessibility role 'combobox' + name 'Account type' -- stable across restyle/markup changes and matches what an operator sees. Fallback: the labelling text, for legacy rows where inputs share a role and carry no name. Last resort: viewport-fraction click point, valid only while the layout is fixed.",
-      "risk": "safe",
-      "phase": "main",
-      "pre": null,
-      "post": {
-        "kind": "all_of",
-        "of": [
-          {
-            "kind": "url_matches",
-            "pattern": "^/member/\\d+/subaccount/new(\\?|$)"
-          },
-          {
-            "kind": "ax_present",
-            "role": "heading",
-            "name_matches": "^Open\\ a\\ sub\\-account"
-          }
-        ]
-      },
-      "timeout_ms": 8000
-    },
-    {
-      "id": "s09_enter_the_opening_deposi",
-      "intent": "enter the opening deposit",
-      "action": {
-        "type": "type",
-        "value_ref": "{{ deposit }}",
-        "key": null,
-        "ms": null
-      },
-      "target": {
-        "strategies": [
-          {
-            "kind": "role_name",
-            "role": "textbox",
-            "name": "Opening deposit (USD)",
-            "exact": true,
-            "nth": 0
-          },
-          {
-            "kind": "anchor",
-            "anchor_text": "Opening deposit (USD)",
-            "control_role": "textbox",
-            "control_name": null
-          },
-          {
-            "kind": "text",
-            "text": "Opening deposit (USD)",
-            "role": "textbox"
-          },
-          {
-            "kind": "bbox_ratio",
-            "x": 0.2079,
-            "y": 0.2291,
-            "note": "viewport-fraction fallback captured at record time"
-          }
-        ],
-        "rationale": "Primary: accessibility role 'textbox' + name 'Opening deposit (USD)' -- stable across restyle/markup changes and matches what an operator sees. Fallback: the labelling text, for legacy rows where inputs share a role and carry no name. Last resort: viewport-fraction click point, valid only while the layout is fixed."
-      },
-      "target_rationale": "Primary: accessibility role 'textbox' + name 'Opening deposit (USD)' -- stable across restyle/markup changes and matches what an operator sees. Fallback: the labelling text, for legacy rows where inputs share a role and carry no name. Last resort: viewport-fraction click point, valid only while the layout is fixed.",
-      "risk": "safe",
-      "phase": "main",
-      "pre": null,
-      "post": {
-        "kind": "all_of",
-        "of": [
-          {
-            "kind": "url_matches",
-            "pattern": "^/member/\\d+/subaccount/new(\\?|$)"
-          },
-          {
-            "kind": "ax_present",
-            "role": "heading",
-            "name_matches": "^Open\\ a\\ sub\\-account"
-          }
-        ]
-      },
-      "timeout_ms": 8000
-    },
-    {
-      "id": "s10_advance_to_the_confirmat",
-      "intent": "advance to the confirmation screen",
-      "action": {
-        "type": "click",
-        "value_ref": null,
-        "key": null,
-        "ms": null
-      },
-      "target": {
-        "strategies": [
-          {
-            "kind": "role_name",
-            "role": "button",
-            "name": "Review",
-            "exact": true,
-            "nth": 0
-          },
-          {
-            "kind": "text",
-            "text": "Review",
-            "role": "button"
-          },
-          {
-            "kind": "bbox_ratio",
-            "x": 0.0397,
-            "y": 0.2666,
-            "note": "viewport-fraction fallback captured at record time"
-          }
-        ],
-        "rationale": "Primary: accessibility role 'button' + name 'Review' -- stable across restyle/markup changes and matches what an operator sees. Fallback: the labelling text, for legacy rows where inputs share a role and carry no name. Last resort: viewport-fraction click point, valid only while the layout is fixed."
-      },
-      "target_rationale": "Primary: accessibility role 'button' + name 'Review' -- stable across restyle/markup changes and matches what an operator sees. Fallback: the labelling text, for legacy rows where inputs share a role and carry no name. Last resort: viewport-fraction click point, valid only while the layout is fixed.",
-      "risk": "safe",
-      "phase": "main",
-      "pre": null,
-      "post": {
-        "kind": "all_of",
-        "of": [
-          {
-            "kind": "url_matches",
-            "pattern": "^/member/\\d+/subaccount/new(\\?|$)"
-          },
-          {
-            "kind": "ax_present",
-            "role": "heading",
-            "name_matches": "^Confirm\\ new\\ sub\\-account"
-          }
-        ]
-      },
-      "timeout_ms": 8000
-    },
-    {
-      "id": "s11_read_the_account_number",
-      "intent": "read the account number assigned on the confirmation screen",
+      "id": "s07_read_savings_balance",
+      "intent": "read savings balance",
       "action": {
         "type": "read",
         "value_ref": null,
@@ -667,21 +434,39 @@
       "target": {
         "strategies": [
           {
+            "kind": "cell_at",
+            "row_anchor": "Savings",
+            "column_header": "Current balance",
+            "contains": null
+          },
+          {
+            "kind": "role_name",
+            "role": "cell",
+            "name": "$4215.67",
+            "exact": true,
+            "nth": 0
+          },
+          {
             "kind": "anchor",
-            "anchor_text": "New account number",
+            "anchor_text": "Savings",
             "control_role": "cell",
             "control_name": null
           },
           {
+            "kind": "text",
+            "text": "$4215.67",
+            "role": "cell"
+          },
+          {
             "kind": "bbox_ratio",
-            "x": 0.1893,
-            "y": 0.2973,
+            "x": 0.2299,
+            "y": 0.4227,
             "note": "viewport-fraction fallback captured at record time"
           }
         ],
-        "rationale": "Primary: accessibility role 'cell' + name '<redacted:e2e3368d>' -- stable across restyle/markup changes and matches what an operator sees. Fallback: the labelling text, for legacy rows where inputs share a role and carry no name. Last resort: viewport-fraction click point, valid only while the layout is fixed."
+        "rationale": "Primary: accessibility role 'cell' + name '$4215.67' -- stable across restyle/markup changes and matches what an operator sees. Fallback: the labelling text, for legacy rows where inputs share a role and carry no name. Last resort: viewport-fraction click point, valid only while the layout is fixed."
       },
-      "target_rationale": "Primary: accessibility role 'cell' + name '<redacted:e2e3368d>' -- stable across restyle/markup changes and matches what an operator sees. Fallback: the labelling text, for legacy rows where inputs share a role and carry no name. Last resort: viewport-fraction click point, valid only while the layout is fixed.",
+      "target_rationale": "Primary: accessibility role 'cell' + name '$4215.67' -- stable across restyle/markup changes and matches what an operator sees. Fallback: the labelling text, for legacy rows where inputs share a role and carry no name. Last resort: viewport-fraction click point, valid only while the layout is fixed.",
       "risk": "safe",
       "phase": "main",
       "pre": null,
@@ -690,72 +475,20 @@
         "of": [
           {
             "kind": "url_matches",
-            "pattern": "^/member/\\d+/subaccount/new(\\?|$)"
+            "pattern": "^/member/\\d+(\\?|$)"
           },
           {
             "kind": "ax_present",
             "role": "heading",
-            "name_matches": "^Confirm\\ new\\ sub\\-account"
+            "name_matches": "^Member\\ \\d+"
           }
         ]
       },
       "timeout_ms": 8000
     },
     {
-      "id": "s12_create_the_sub_account_r",
-      "intent": "create the sub-account (risky, operator-approved)",
-      "action": {
-        "type": "click",
-        "value_ref": null,
-        "key": null,
-        "ms": null
-      },
-      "target": {
-        "strategies": [
-          {
-            "kind": "role_name",
-            "role": "button",
-            "name": "Confirm and create account",
-            "exact": true,
-            "nth": 0
-          },
-          {
-            "kind": "text",
-            "text": "Confirm and create account",
-            "role": "button"
-          },
-          {
-            "kind": "bbox_ratio",
-            "x": 0.0858,
-            "y": 0.3766,
-            "note": "viewport-fraction fallback captured at record time"
-          }
-        ],
-        "rationale": "Primary: accessibility role 'button' + name 'Confirm and create account' -- stable across restyle/markup changes and matches what an operator sees. Fallback: the labelling text, for legacy rows where inputs share a role and carry no name. Last resort: viewport-fraction click point, valid only while the layout is fixed."
-      },
-      "target_rationale": "Primary: accessibility role 'button' + name 'Confirm and create account' -- stable across restyle/markup changes and matches what an operator sees. Fallback: the labelling text, for legacy rows where inputs share a role and carry no name. Last resort: viewport-fraction click point, valid only while the layout is fixed.",
-      "risk": "risky",
-      "phase": "main",
-      "pre": null,
-      "post": {
-        "kind": "all_of",
-        "of": [
-          {
-            "kind": "url_matches",
-            "pattern": "^/member/\\d+/subaccount/create(\\?|$)"
-          },
-          {
-            "kind": "ax_present",
-            "role": "heading",
-            "name_matches": "^Sub\\-account\\ opened"
-          }
-        ]
-      },
-      "timeout_ms": 8000
-    },
-    {
-      "id": "s13_verify_the_account_numbe",
-      "intent": "verify the account number after creation",
+      "id": "s08_read_savings_balance",
+      "intent": "read savings balance",
       "action": {
         "type": "read",
         "value_ref": null,
@@ -765,21 +498,39 @@
       "target": {
         "strategies": [
           {
+            "kind": "cell_at",
+            "row_anchor": "Savings",
+            "column_header": "Current balance",
+            "contains": null
+          },
+          {
+            "kind": "role_name",
+            "role": "cell",
+            "name": "$4215.67",
+            "exact": true,
+            "nth": 0
+          },
+          {
             "kind": "anchor",
-            "anchor_text": "New account number",
+            "anchor_text": "Savings",
             "control_role": "cell",
             "control_name": null
           },
           {
+            "kind": "text",
+            "text": "$4215.67",
+            "role": "cell"
+          },
+          {
             "kind": "bbox_ratio",
-            "x": 0.1893,
-            "y": 0.266,
+            "x": 0.2299,
+            "y": 0.4227,
             "note": "viewport-fraction fallback captured at record time"
           }
         ],
-        "rationale": "Primary: accessibility role 'cell' + name '<redacted:e2e3368d>' -- stable across restyle/markup changes and matches what an operator sees. Fallback: the labelling text, for legacy rows where inputs share a role and carry no name. Last resort: viewport-fraction click point, valid only while the layout is fixed."
+        "rationale": "Primary: accessibility role 'cell' + name '$4215.67' -- stable across restyle/markup changes and matches what an operator sees. Fallback: the labelling text, for legacy rows where inputs share a role and carry no name. Last resort: viewport-fraction click point, valid only while the layout is fixed."
       },
-      "target_rationale": "Primary: accessibility role 'cell' + name '<redacted:e2e3368d>' -- stable across restyle/markup changes and matches what an operator sees. Fallback: the labelling text, for legacy rows where inputs share a role and carry no name. Last resort: viewport-fraction click point, valid only while the layout is fixed.",
+      "target_rationale": "Primary: accessibility role 'cell' + name '$4215.67' -- stable across restyle/markup changes and matches what an operator sees. Fallback: the labelling text, for legacy rows where inputs share a role and carry no name. Last resort: viewport-fraction click point, valid only while the layout is fixed.",
       "risk": "safe",
       "phase": "main",
       "pre": null,
@@ -788,12 +539,12 @@
         "of": [
           {
             "kind": "url_matches",
-            "pattern": "^/member/\\d+/subaccount/create(\\?|$)"
+            "pattern": "^/member/\\d+(\\?|$)"
           },
           {
             "kind": "ax_present",
             "role": "heading",
-            "name_matches": "^Sub\\-account\\ opened"
+            "name_matches": "^Member\\ \\d+"
           }
         ]
       },
@@ -805,12 +556,12 @@
     "of": [
       {
         "kind": "url_matches",
-        "pattern": "^/member/\\d+/subaccount/create(\\?|$)"
+        "pattern": "^/member/\\d+(\\?|$)"
       },
       {
         "kind": "ax_present",
         "role": "heading",
-        "name_matches": "^Sub\\-account\\ opened"
+        "name_matches": "^Member\\ \\d+"
       }
     ]
   },
@@ -943,10 +694,10 @@
     "note": ""
   },
   "provenance": {
-    "discovered_by_model": "scripted",
-    "discovered_at": "2026-09-09T06:46:45+00:00",
-    "trace_hash": "3256b2467f59f24b9102a202f7496bbaed207c7f0461b73a3635b8e82d916283",
-    "raw_step_count": 14,
+    "discovered_by_model": "deepseek-ai/deepseek-v4-pro-0813",
+    "discovered_at": "2026-09-10T08:09:01+00:00",
+    "trace_hash": "72375da572ed9a671229baf32c10454884b5fec940ecfd0e908ca86b0b67a56f",
+    "raw_step_count": 9,
     "stability": null
   }
 }

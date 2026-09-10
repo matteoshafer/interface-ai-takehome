@@ -18,7 +18,7 @@
       "matched_strategy": "role_name",
       "strategy_rank": 0,
       "recoveries": [],
-      "duration_ms": 15,
+      "duration_ms": 16,
       "note": ""
     },
     {
@@ -30,7 +30,7 @@
       "matched_strategy": "role_name",
       "strategy_rank": 0,
       "recoveries": [],
-      "duration_ms": 21,
+      "duration_ms": 17,
       "note": ""
     },
     {
@@ -42,7 +42,7 @@
       "matched_strategy": "role_name",
       "strategy_rank": 0,
       "recoveries": [],
-      "duration_ms": 597,
+      "duration_ms": 598,
       "note": ""
     },
     {
@@ -54,7 +54,7 @@
       "matched_strategy": "role_name",
       "strategy_rank": 0,
       "recoveries": [],
-      "duration_ms": 16,
+      "duration_ms": 15,
       "note": ""
     },
     {
@@ -66,7 +66,7 @@
       "matched_strategy": "role_name",
       "strategy_rank": 0,
       "recoveries": [],
-      "duration_ms": 599,
+      "duration_ms": 605,
       "note": ""
     },
     {
@@ -78,7 +78,7 @@
       "matched_strategy": "role_name",
       "strategy_rank": 0,
       "recoveries": [],
-      "duration_ms": 594,
+      "duration_ms": 593,
       "note": ""
     },
     {
@@ -90,7 +90,7 @@
       "matched_strategy": "role_name",
       "strategy_rank": 0,
       "recoveries": [],
-      "duration_ms": 598,
+      "duration_ms": 592,
       "note": ""
     },
     {
@@ -102,7 +102,7 @@
       "matched_strategy": "role_name",
       "strategy_rank": 0,
       "recoveries": [],
-      "duration_ms": 13,
+      "duration_ms": 16,
       "note": ""
     },
     {
@@ -114,7 +114,7 @@
       "matched_strategy": "role_name",
       "strategy_rank": 0,
       "recoveries": [],
-      "duration_ms": 8,
+      "duration_ms": 10,
       "note": ""
     },
     {
@@ -126,7 +126,7 @@
       "matched_strategy": "role_name",
       "strategy_rank": 0,
       "recoveries": [],
-      "duration_ms": 599,
+      "duration_ms": 598,
       "note": ""
     },
     {
@@ -138,7 +138,7 @@
       "matched_strategy": "anchor",
       "strategy_rank": 0,
       "recoveries": [],
-      "duration_ms": 25,
+      "duration_ms": 26,
       "note": ""
     },
     {
@@ -150,7 +150,7 @@
       "matched_strategy": "role_name",
       "strategy_rank": 0,
       "recoveries": [],
-      "duration_ms": 601,
+      "duration_ms": 569,
       "note": ""
     },
     {
@@ -162,11 +162,11 @@
       "matched_strategy": "anchor",
       "strategy_rank": 0,
       "recoveries": [],
-      "duration_ms": 20,
+      "duration_ms": 25,
       "note": ""
     }
   ],
-  "duration_ms": 4272,
+  "duration_ms": 4243,
   "outputs": {
     "new_account_number": "<redacted:e2e3368d>",
     "created_account_number": "<redacted:e2e3368d>"
