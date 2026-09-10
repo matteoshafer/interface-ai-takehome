@@ -1,0 +1,13 @@
+{# Unexpected interstitial -- appears mid-flow when ?inject=dialog is active.
+   Recoverable IF a capability declares how to dismiss it; a hard failure if not. #}
+<div class="modal" role="alertdialog" aria-label="System notice">
+  <h2>System notice</h2>
+  <p>Scheduled maintenance tonight 11:00 PM ET. Acknowledge to continue working.</p>
+  <form method="get">
+    {% for k, v in request.args.items() if k != 'inject' %}
+      <input type="hidden" name="{{ k }}" value="{{ v }}">
+    {% endfor %}
+    <button class="btn" type="submit">Acknowledge</button>
+  </form>
+</div>
+

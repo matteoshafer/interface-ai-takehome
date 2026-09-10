@@ -1,0 +1,182 @@
+{
+  "outcome": "success",
+  "capability_id": "open-savings-subaccount",
+  "capability_version": "0.1.0",
+  "params": {
+    "member_id": "100042",
+    "deposit": "250.00",
+    "username": "<supplied>",
+    "password": "<redacted:903fabec>"
+  },
+  "steps": [
+    {
+      "index": 0,
+      "step_id": "s01_sign_in_as_the_operator",
+      "intent": "sign in as the operator",
+      "action": "type",
+      "status": "ok",
+      "matched_strategy": "role_name",
+      "strategy_rank": 0,
+      "recoveries": [],
+      "duration_ms": 15,
+      "note": ""
+    },
+    {
+      "index": 1,
+      "step_id": "s02_enter_the_operator_passw",
+      "intent": "enter the operator password",
+      "action": "type",
+      "status": "ok",
+      "matched_strategy": "role_name",
+      "strategy_rank": 0,
+      "recoveries": [],
+      "duration_ms": 21,
+      "note": ""
+    },
+    {
+      "index": 2,
+      "step_id": "s03_submit_the_login_form",
+      "intent": "submit the login form",
+      "action": "click",
+      "status": "ok",
+      "matched_strategy": "role_name",
+      "strategy_rank": 0,
+      "recoveries": [],
+      "duration_ms": 597,
+      "note": ""
+    },
+    {
+      "index": 3,
+      "step_id": "s04_search_for_the_member_by",
+      "intent": "search for the member by id",
+      "action": "type",
+      "status": "ok",
+      "matched_strategy": "role_name",
+      "strategy_rank": 0,
+      "recoveries": [],
+      "duration_ms": 16,
+      "note": ""
+    },
+    {
+      "index": 4,
+      "step_id": "s05_run_the_member_search",
+      "intent": "run the member search",
+      "action": "click",
+      "status": "ok",
+      "matched_strategy": "role_name",
+      "strategy_rank": 0,
+      "recoveries": [],
+      "duration_ms": 599,
+      "note": ""
+    },
+    {
+      "index": 5,
+      "step_id": "s06_open_the_matching_member",
+      "intent": "open the matching member record",
+      "action": "click",
+      "status": "ok",
+      "matched_strategy": "role_name",
+      "strategy_rank": 0,
+      "recoveries": [],
+      "duration_ms": 594,
+      "note": ""
+    },
+    {
+      "index": 6,
+      "step_id": "s07_start_the_new_sub_accoun",
+      "intent": "start the new sub-account form",
+      "action": "click",
+      "status": "ok",
+      "matched_strategy": "role_name",
+      "strategy_rank": 0,
+      "recoveries": [],
+      "duration_ms": 598,
+      "note": ""
+    },
+    {
+      "index": 7,
+      "step_id": "s08_choose_the_account_type",
+      "intent": "choose the account type",
+      "action": "select",
+      "status": "ok",
+      "matched_strategy": "role_name",
+      "strategy_rank": 0,
+      "recoveries": [],
+      "duration_ms": 13,
+      "note": ""
+    },
+    {
+      "index": 8,
+      "step_id": "s09_enter_the_opening_deposi",
+      "intent": "enter the opening deposit",
+      "action": "type",
+      "status": "ok",
+      "matched_strategy": "role_name",
+      "strategy_rank": 0,
+      "recoveries": [],
+      "duration_ms": 8,
+      "note": ""
+    },
+    {
+      "index": 9,
+      "step_id": "s10_advance_to_the_confirmat",
+      "intent": "advance to the confirmation screen",
+      "action": "click",
+      "status": "ok",
+      "matched_strategy": "role_name",
+      "strategy_rank": 0,
+      "recoveries": [],
+      "duration_ms": 599,
+      "note": ""
+    },
+    {
+      "index": 10,
+      "step_id": "s11_read_the_account_number",
+      "intent": "read the account number assigned on the confirmation screen",
+      "action": "read",
+      "status": "ok",
+      "matched_strategy": "anchor",
+      "strategy_rank": 0,
+      "recoveries": [],
+      "duration_ms": 25,
+      "note": ""
+    },
+    {
+      "index": 11,
+      "step_id": "s12_create_the_sub_account_r",
+      "intent": "create the sub-account (risky, operator-approved)",
+      "action": "click",
+      "status": "ok",
+      "matched_strategy": "role_name",
+      "strategy_rank": 0,
+      "recoveries": [],
+      "duration_ms": 601,
+      "note": ""
+    },
+    {
+      "index": 12,
+      "step_id": "s13_verify_the_account_numbe",
+      "intent": "verify the account number after creation",
+      "action": "read",
+      "status": "ok",
+      "matched_strategy": "anchor",
+      "strategy_rank": 0,
+      "recoveries": [],
+      "duration_ms": 20,
+      "note": ""
+    }
+  ],
+  "duration_ms": 4272,
+  "outputs": {
+    "new_account_number": "<redacted:e2e3368d>",
+    "created_account_number": "<redacted:e2e3368d>"
+  },
+  "business_outcome": null,
+  "business_data": null,
+  "at_step": null,
+  "error_class": null,
+  "failed_step": null,
+  "expected": null,
+  "observed": null,
+  "evidence_dir": null
+}

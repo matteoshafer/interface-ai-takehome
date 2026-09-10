@@ -1,0 +1,6 @@
+{% extends "base.html" %}
+{% block body %}
+<h1>Member not found</h1>
+<div class="err" role="alert">No member exists with {{ t.member_label }} &ldquo;{{ member_id }}&rdquo;.</div>
+<p><a href="{{ url_for('home') }}">&laquo; New search</a></p>
+{% endblock %}

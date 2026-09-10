@@ -1,0 +1,23 @@
+{
+  "url": "http://localhost:5050/member/100042/subaccount/new",
+  "title": "MeridianCU CoreAdmin",
+  "http_status": 200,
+  "dialog": null,
+  "nodes": [
+    "link: Sign out",
+    "heading: Confirm new sub-account",
+    "status: Review the details below. This screen is the confirmation checkpoint.",
+    "rowheader: Member ID",
+    "cell: 100042",
+    "rowheader: Member",
+    "cell: Jordan Rivera",
+    "rowheader: New account type",
+    "cell: Savings",
+    "rowheader: New account number",
+    "cell: <redacted:e2e3368d>",
+    "rowheader: Opening deposit",
+    "cell: $250.00",
+    "button: Confirm and create account"
+  ],
+  "text": "MeridianCU CoreAdmin \u00a0|\u00a0 operator: operator \u00a0|\u00a0 Sign out\nConfirm new sub-account\nReview the details below. This screen is the confirmation checkpoint.\nMember ID\t100042\nMember\tJordan Rivera\nNew account type\tSavings\nNew account number\t<redacted:e2e3368d>\nOpening deposit\t$250.00\n\nConfirm and create account\n\n\"Confirm and create account\" is a risky / irreversible action: the guardrail blocks it on replay unless the capability is approved."
+}

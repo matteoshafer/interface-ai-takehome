@@ -1,0 +1,13 @@
+{
+  "url": "http://localhost:5050/member/100042",
+  "title": "MeridianCU CoreAdmin",
+  "http_status": 500,
+  "dialog": null,
+  "nodes": [
+    "link: Sign out",
+    "heading: Application error",
+    "alert: An unexpected error occurred while processing your request. Reference: CU-ADMIN-500. Try again or contact the help desk.",
+    "link: \u00ab Return to servicing home"
+  ],
+  "text": "MeridianCU CoreAdmin \u00a0|\u00a0 operator: operator \u00a0|\u00a0 Sign out\nApplication error\nAn unexpected error occurred while processing your request. Reference: CU-ADMIN-500. Try again or contact the help desk.\n\n\u00ab Return to servicing home"
+}

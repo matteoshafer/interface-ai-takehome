@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block body %}
+<h1>Member Servicing</h1>
+<p>Look up a member to view accounts and balances or to open a sub-account.</p>
+<form method="get" action="{{ url_for('members') }}">
+  <table class="layout"><tr><td>
+    <div class="fld">
+      {% if hostile %}{{ t.member_label }}{% else %}<label for="q">{{ t.member_label }} or name</label>{% endif %}
+      <input type="text" name="q" id="q">
+      <button class="btn" type="submit">Search</button>
+    </div>
+  </td></tr></table>
+</form>
+<h2>Recent activity</h2>
+<table class="grid">
+  <tr><th>Time</th><th>Operator</th><th>Action</th></tr>
+  <tr><td>09:14</td><td>you</td><td>Signed in</td></tr>
+</table>
+{% endblock %}

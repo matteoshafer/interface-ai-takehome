@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block body %}
+<h1>Permission denied</h1>
+<div class="err" role="alert">
+  {% if reason == "restricted" %}
+    Member {{ member_id }} is flagged restricted. Back-office servicing requires a
+    supervisor override.
+  {% else %}
+    You do not have permission to view this screen.
+  {% endif %}
+</div>
+<p><a href="{{ url_for('home') }}">&laquo; New search</a></p>
+{% endblock %}

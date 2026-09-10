@@ -1,0 +1,123 @@
+{
+  "outcome": "success",
+  "capability_id": "lookup-savings-balance",
+  "capability_version": "0.1.0",
+  "params": {
+    "member_id": "100042",
+    "username": "<supplied>",
+    "password": "<redacted:903fabec>"
+  },
+  "steps": [
+    {
+      "index": 0,
+      "step_id": "s01_sign_in_as_the_operator",
+      "intent": "sign in as the operator",
+      "action": "type",
+      "status": "ok",
+      "matched_strategy": "role_name",
+      "strategy_rank": 0,
+      "recoveries": [],
+      "duration_ms": 15,
+      "note": ""
+    },
+    {
+      "index": 1,
+      "step_id": "s02_enter_the_operator_passw",
+      "intent": "enter the operator password",
+      "action": "type",
+      "status": "ok",
+      "matched_strategy": "role_name",
+      "strategy_rank": 0,
+      "recoveries": [],
+      "duration_ms": 18,
+      "note": ""
+    },
+    {
+      "index": 2,
+      "step_id": "s03_submit_the_login_form",
+      "intent": "submit the login form",
+      "action": "click",
+      "status": "ok",
+      "matched_strategy": "role_name",
+      "strategy_rank": 0,
+      "recoveries": [],
+      "duration_ms": 609,
+      "note": ""
+    },
+    {
+      "index": 3,
+      "step_id": "s04_search_for_the_member_by",
+      "intent": "search for the member by id",
+      "action": "type",
+      "status": "ok",
+      "matched_strategy": "role_name",
+      "strategy_rank": 0,
+      "recoveries": [],
+      "duration_ms": 16,
+      "note": ""
+    },
+    {
+      "index": 4,
+      "step_id": "s05_run_the_member_search",
+      "intent": "run the member search",
+      "action": "click",
+      "status": "ok",
+      "matched_strategy": "role_name",
+      "strategy_rank": 0,
+      "recoveries": [],
+      "duration_ms": 595,
+      "note": ""
+    },
+    {
+      "index": 5,
+      "step_id": "s06_open_the_matching_member",
+      "intent": "open the matching member record",
+      "action": "click",
+      "status": "recovered",
+      "matched_strategy": "role_name",
+      "strategy_rank": 0,
+      "recoveries": [
+        "maintenance_notice"
+      ],
+      "duration_ms": 1200,
+      "note": "satisfied after recovery"
+    },
+    {
+      "index": 6,
+      "step_id": "s07_read_the_current_savings",
+      "intent": "read the current savings balance",
+      "action": "read",
+      "status": "ok",
+      "matched_strategy": "cell_at",
+      "strategy_rank": 0,
+      "recoveries": [],
+      "duration_ms": 32,
+      "note": ""
+    },
+    {
+      "index": 7,
+      "step_id": "s08_note_the_member_account",
+      "intent": "note the member account status",
+      "action": "read",
+      "status": "ok",
+      "matched_strategy": "role_name",
+      "strategy_rank": 0,
+      "recoveries": [],
+      "duration_ms": 10,
+      "note": ""
+    }
+  ],
+  "duration_ms": 3376,
+  "outputs": {
+    "savings_balance": 4215.67,
+    "member_status": "Active"
+  },
+  "business_outcome": null,
+  "business_data": null,
+  "at_step": null,
+  "error_class": null,
+  "failed_step": null,
+  "expected": null,
+  "observed": null,
+  "evidence_dir": null
+}

@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block body %}
+<h1>Sign in</h1>
+{% if expired %}<div class="note" role="status">Your session has expired. Please sign in again.</div>{% endif %}
+{% if error %}<div class="err" role="alert">{{ error }}</div>{% endif %}
+<form method="post" action="{{ url_for('login') }}">
+  <table class="layout"><tr><td>
+    <div class="fld">
+      {% if hostile %}Username{% else %}<label for="u">Username</label>{% endif %}
+      <input type="text" name="username" id="u">
+    </div>
+    <div class="fld">
+      {% if hostile %}Password{% else %}<label for="p">Password</label>{% endif %}
+      <input type="password" name="password" id="p">
+    </div>
+    <div class="fld"><button class="btn" type="submit">Sign in</button></div>
+  </td></tr></table>
+</form>
+<p style="color:#555">Demo build -- any non-empty username and password works.</p>
+{% endblock %}

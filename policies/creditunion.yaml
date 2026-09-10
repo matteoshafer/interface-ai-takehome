@@ -1,0 +1,31 @@
+# Guardrails for the mock credit-union admin app. Referenced by every capability
+# recorded against app_id "cu-coreadmin", and enforced identically during
+# discovery and replay.
+
+allowed_origins:
+  - "http://localhost:5050"
+  - "http://127.0.0.1:5050"
+
+# Path globs the agent may navigate to. Anything else is blocked.
+allowed_routes:
+  - "/"
+  - "/login"
+  - "/logout"
+  - "/members"
+  - "/member/*"
+  - "/member/*/subaccount/*"
+
+allowed_actions: [navigate, click, type, select, press_key, read, wait]
+
+# Accessible names that mark a click as risky / irreversible. In discovery these
+# route to an operator confirmation; in replay they are refused unless the
+# capability is approved AND the step is explicitly marked risk: risky.
+risky_action_patterns:
+  - "(?i)\\b(confirm and create|create account|transfer|post|approve|delete|close account)\\b"
+risky_action_handling: confirm
+
+redaction:
+  patterns:
+    - "\\b\\d{3}-\\d{2}-\\d{4}\\b"          # SSN
+    - "\\b\\d{2}-\\d{5,6}-\\d{2}\\b"        # internal account numbers (NN-NNNNN-NN)
+  field_names: [password, ssn, full_account_number, token, api_key, authorization]

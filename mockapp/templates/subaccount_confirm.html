@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block body %}
+<h1>Confirm new sub-account</h1>
+<div class="note" role="status">Review the details below. This screen is the confirmation checkpoint.</div>
+<table class="grid">
+  <tr><th>{{ t.member_label }}</th><td>{{ m.member_id }}</td></tr>
+  <tr><th>Member</th><td>{{ m.name }}</td></tr>
+  <tr><th>New account type</th><td>{{ kind }}</td></tr>
+  <tr><th>New account number</th><td>{{ new_number }}</td></tr>
+  <tr><th>Opening deposit</th><td>${{ "%.2f"|format(deposit) }}</td></tr>
+  {% if branch %}<tr><th>Home branch</th><td>{{ branch }}</td></tr>{% endif %}
+</table>
+<form method="post" action="{{ url_for('subaccount_create', member_id=m.member_id) }}">
+  <input type="hidden" name="kind" value="{{ kind }}">
+  <input type="hidden" name="deposit" value="{{ "%.2f"|format(deposit) }}">
+  <p style="margin-top:12px">
+    <button class="btn" type="submit">Confirm and create account</button>
+  </p>
+</form>
+<p style="color:#555">"Confirm and create account" is a risky / irreversible action: the
+guardrail blocks it on replay unless the capability is approved.</p>
+{% endblock %}

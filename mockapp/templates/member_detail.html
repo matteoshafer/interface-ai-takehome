@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}{{ m.name }} -- {{ t.brand }}{% endblock %}
+{% block body %}
+{% if dialog %}{% include "_dialog.html" %}{% endif %}
+<h1>Member {{ m.member_id }} &mdash; {{ m.name }}</h1>
+<p><a href="{{ url_for('home') }}">&laquo; New search</a></p>
+
+<table class="layout"><tr><td>
+  <table class="grid">
+    <tr><th>{{ t.member_label }}</th><td>{{ m.member_id }}</td></tr>
+    <tr><th>Name</th><td>{{ m.name }}</td></tr>
+    <tr><th>Status</th><td>{{ m.status }}</td></tr>
+    <tr><th>SSN</th><td>{{ m.ssn }}</td></tr>
+  </table>
+</td></tr></table>
+
+<h2>Accounts</h2>
+<table class="grid">
+  <tr><th>Type</th><th>Account number</th><th>Current balance</th></tr>
+  {% for a in m.accounts %}
+  <tr>
+    <td>{{ a.kind }}</td>
+    <td>{{ a.number }}</td>
+    <td>${{ "%.2f"|format(a.balance) }}</td>
+  </tr>
+  {% endfor %}
+</table>
+
+<p style="margin-top:12px">
+  <a class="btn" href="{{ url_for('subaccount_new', member_id=m.member_id) }}">Open a sub-account</a>
+</p>
+{% endblock %}

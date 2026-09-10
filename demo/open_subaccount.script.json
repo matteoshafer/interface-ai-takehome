@@ -1,0 +1,16 @@
+[
+  {"tool": "type_text", "role": "textbox", "name": "Username", "text": "operator", "why": "sign in as the operator"},
+  {"tool": "type_text", "role": "textbox", "name": "Password", "text": "demo-pass", "why": "enter the operator password"},
+  {"tool": "click", "role": "button", "name": "Sign in", "why": "submit the login form"},
+  {"tool": "type_text", "role": "textbox", "name": "Member ID or name", "text": "100042", "why": "search for the member by id"},
+  {"tool": "click", "role": "button", "name": "Search", "why": "run the member search"},
+  {"tool": "click", "role": "link", "name": "Open", "why": "open the matching member record"},
+  {"tool": "click", "role": "link", "name": "Open a sub-account", "why": "start the new sub-account form"},
+  {"tool": "select_option", "role": "combobox", "name": "Account type", "value": "Savings", "why": "choose the account type"},
+  {"tool": "type_text", "role": "textbox", "name": "Opening deposit (USD)", "text": "250.00", "why": "enter the opening deposit"},
+  {"tool": "click", "role": "button", "name": "Review", "why": "advance to the confirmation screen"},
+  {"tool": "read_value", "label": "new_account_number", "role": "cell", "name": "20-100042-52", "why": "read the account number assigned on the confirmation screen"},
+  {"tool": "click", "role": "button", "name": "Confirm and create account", "why": "create the sub-account (risky, operator-approved)"},
+  {"tool": "read_value", "label": "created_account_number", "role": "cell", "name": "20-100042-52", "why": "verify the account number after creation"},
+  {"tool": "finish", "summary": "Signed in, opened a Savings sub-account for the member with a 250.00 opening deposit, and confirmed creation.", "outputs": {}}
+]

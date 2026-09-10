@@ -1,0 +1,80 @@
+{
+  "outcome": "business_outcome",
+  "capability_id": "lookup-savings-balance",
+  "capability_version": "0.1.0",
+  "params": {},
+  "steps": [
+    {
+      "index": 0,
+      "step_id": "s01_sign_in_as_the_operator",
+      "intent": "sign in as the operator",
+      "action": "type",
+      "status": "ok",
+      "matched_strategy": "role_name",
+      "strategy_rank": 0,
+      "recoveries": [],
+      "duration_ms": 17,
+      "note": ""
+    },
+    {
+      "index": 1,
+      "step_id": "s02_enter_the_operator_passw",
+      "intent": "enter the operator password",
+      "action": "type",
+      "status": "ok",
+      "matched_strategy": "role_name",
+      "strategy_rank": 0,
+      "recoveries": [],
+      "duration_ms": 17,
+      "note": ""
+    },
+    {
+      "index": 2,
+      "step_id": "s03_submit_the_login_form",
+      "intent": "submit the login form",
+      "action": "click",
+      "status": "ok",
+      "matched_strategy": "role_name",
+      "strategy_rank": 0,
+      "recoveries": [],
+      "duration_ms": 591,
+      "note": ""
+    },
+    {
+      "index": 3,
+      "step_id": "s04_search_for_the_member_by",
+      "intent": "search for the member by id",
+      "action": "type",
+      "status": "ok",
+      "matched_strategy": "role_name",
+      "strategy_rank": 0,
+      "recoveries": [],
+      "duration_ms": 18,
+      "note": ""
+    },
+    {
+      "index": 4,
+      "step_id": "s05_run_the_member_search",
+      "intent": "run the member search",
+      "action": "click",
+      "status": "ok",
+      "matched_strategy": "role_name",
+      "strategy_rank": 0,
+      "recoveries": [],
+      "duration_ms": 597,
+      "note": ""
+    }
+  ],
+  "duration_ms": 2399,
+  "outputs": null,
+  "business_outcome": "permission_denied",
+  "business_data": {
+    "permitted": false
+  },
+  "at_step": "s06_open_the_matching_member",
+  "error_class": null,
+  "failed_step": null,
+  "expected": null,
+  "observed": null,
+  "evidence_dir": null
+}

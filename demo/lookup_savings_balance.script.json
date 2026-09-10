@@ -1,0 +1,11 @@
+[
+  {"tool": "type_text", "role": "textbox", "name": "Username", "text": "operator", "why": "sign in as the operator"},
+  {"tool": "type_text", "role": "textbox", "name": "Password", "text": "demo-pass", "why": "enter the operator password"},
+  {"tool": "click", "role": "button", "name": "Sign in", "why": "submit the login form"},
+  {"tool": "type_text", "role": "textbox", "name": "Member ID or name", "text": "100042", "why": "search for the member by id"},
+  {"tool": "click", "role": "button", "name": "Search", "why": "run the member search"},
+  {"tool": "click", "role": "link", "name": "Open", "why": "open the matching member record"},
+  {"tool": "read_value", "label": "savings_balance", "role": "cell", "name": "$4215.67", "why": "read the current savings balance"},
+  {"tool": "read_value", "label": "member_status", "role": "cell", "name": "Active", "why": "note the member account status"},
+  {"tool": "finish", "summary": "Signed in, searched member 100042, opened the record, read the savings balance and status.", "outputs": {}}
+]

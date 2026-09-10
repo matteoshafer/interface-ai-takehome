@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block body %}
+<h1>Open a sub-account &mdash; {{ m.name }} ({{ m.member_id }})</h1>
+<p><a href="{{ url_for('member_detail', member_id=m.member_id) }}">&laquo; Back to member</a></p>
+
+{% if errors %}
+<div class="err" role="alert">
+  <ul>{% for e in errors %}<li>{{ e }}</li>{% endfor %}</ul>
+</div>
+{% endif %}
+
+<form method="post" action="{{ url_for('subaccount_new', member_id=m.member_id) }}">
+  <table class="layout"><tr><td>
+    <div class="fld">
+      {% if hostile %}Account type{% else %}<label for="k">Account type</label>{% endif %}
+      <select name="kind" id="k">
+        <option value="">-- select --</option>
+        <option value="Savings" {{ 'selected' if kind == 'Savings' }}>Savings</option>
+        <option value="Checking" {{ 'selected' if kind == 'Checking' }}>Checking</option>
+        <option value="Money Market" {{ 'selected' if kind == 'Money Market' }}>Money Market</option>
+      </select>
+    </div>
+    <div class="fld">
+      {% if hostile %}Opening deposit{% else %}<label for="d">Opening deposit (USD)</label>{% endif %}
+      <input type="text" name="deposit" id="d" value="{{ deposit }}">
+    </div>
+    <div class="fld"><button class="btn" type="submit">Review</button></div>
+  </td></tr></table>
+</form>
+{% endblock %}

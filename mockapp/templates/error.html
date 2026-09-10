@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block body %}
+<h1>{% if not_found %}Page not found{% else %}Application error{% endif %}</h1>
+<div class="err" role="alert">
+  {% if not_found %}
+    The requested screen does not exist.
+  {% else %}
+    An unexpected error occurred while processing your request. Reference:
+    CU-ADMIN-500. Try again or contact the help desk.
+  {% endif %}
+</div>
+<p><a href="{{ url_for('home') }}">&laquo; Return to servicing home</a></p>
+{% endblock %}

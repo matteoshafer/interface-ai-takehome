@@ -1,0 +1,17 @@
+# Core
+pydantic>=2.7
+python-dotenv>=1.0
+pyyaml>=6.0
+
+# Computer-use surface
+playwright>=1.44
+
+# LLM discovery run (not needed for replay / tests)
+anthropic>=0.40
+
+# Mock target app + operator console
+flask>=3.0
+
+# Dev / tests
+pytest>=8.0
+pytest-playwright>=0.5

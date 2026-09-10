@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block body %}
+<h1>Sub-account opened</h1>
+<div class="note" role="status">The {{ kind }} sub-account has been created for {{ m.name }}.</div>
+<table class="grid">
+  <tr><th>{{ t.member_label }}</th><td>{{ m.member_id }}</td></tr>
+  <tr><th>New account type</th><td>{{ kind }}</td></tr>
+  <tr><th>New account number</th><td>{{ new_number }}</td></tr>
+  <tr><th>Opening deposit</th><td>${{ deposit }}</td></tr>
+</table>
+<p><a href="{{ url_for('member_detail', member_id=m.member_id) }}">&laquo; Back to member</a></p>
+{% endblock %}

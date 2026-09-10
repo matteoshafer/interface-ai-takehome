@@ -1,0 +1,11 @@
+venv/
+__pycache__/
+*.pyc
+.env
+.pytest_cache/
+*.egg-info/
+.DS_Store
+
+# Transient run output. Curated evidence lives under evidence/ and IS committed;
+# fresh runs land in evidence/_scratch/ and are not.
+evidence/_scratch/

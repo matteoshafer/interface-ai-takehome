@@ -1,0 +1,952 @@
+{
+  "schema_version": "1.0",
+  "id": "open-savings-subaccount",
+  "version": "0.1.0",
+  "name": "Open a Savings sub-account",
+  "description": "Sign in, open a new Savings sub-account for a member with a given opening deposit, and confirm creation.",
+  "target": {
+    "surface_type": "web",
+    "app_id": "cu-coreadmin",
+    "tenant_id": null,
+    "entry": {
+      "url": "http://localhost:5050/login",
+      "url_pattern": "^/login(\\?|$)"
+    }
+  },
+  "policy_ref": "policies/creditunion.yaml",
+  "parameters": [
+    {
+      "name": "member_id",
+      "type": "string",
+      "required": true,
+      "pattern": "^\\d{4,9}$",
+      "description": "Input 'member_id' for this capability.",
+      "sensitivity": "pii",
+      "example": "100042"
+    },
+    {
+      "name": "deposit",
+      "type": "string",
+      "required": true,
+      "pattern": null,
+      "description": "Input 'deposit' for this capability.",
+      "sensitivity": "none",
+      "example": "250.00"
+    },
+    {
+      "name": "username",
+      "type": "string",
+      "required": true,
+      "pattern": null,
+      "description": "Operator username; supplied per invocation, never stored.",
+      "sensitivity": "secret",
+      "example": null
+    },
+    {
+      "name": "password",
+      "type": "string",
+      "required": true,
+      "pattern": null,
+      "description": "Operator password; supplied per invocation, never stored.",
+      "sensitivity": "secret",
+      "example": null
+    }
+  ],
+  "outputs": [
+    {
+      "name": "new_account_number",
+      "type": "string",
+      "description": "Value in the 'New account number' row.",
+      "source_step": "s11_read_the_account_number",
+      "read": {
+        "target": {
+          "strategies": [
+            {
+              "kind": "anchor",
+              "anchor_text": "New account number",
+              "control_role": "cell",
+              "control_name": null
+            }
+          ],
+          "rationale": "Primary: accessibility role 'cell' + name '<redacted:e2e3368d>' -- stable across restyle/markup changes and matches what an operator sees. Fallback: the labelling text, for legacy rows where inputs share a role and carry no name. Last resort: viewport-fraction click point, valid only while the layout is fixed."
+        },
+        "extract": null,
+        "cast": "string"
+      },
+      "sensitivity": "pii"
+    },
+    {
+      "name": "created_account_number",
+      "type": "string",
+      "description": "Value in the 'New account number' row.",
+      "source_step": "s13_verify_the_account_numbe",
+      "read": {
+        "target": {
+          "strategies": [
+            {
+              "kind": "anchor",
+              "anchor_text": "New account number",
+              "control_role": "cell",
+              "control_name": null
+            }
+          ],
+          "rationale": "Primary: accessibility role 'cell' + name '<redacted:e2e3368d>' -- stable across restyle/markup changes and matches what an operator sees. Fallback: the labelling text, for legacy rows where inputs share a role and carry no name. Last resort: viewport-fraction click point, valid only while the layout is fixed."
+        },
+        "extract": null,
+        "cast": "string"
+      },
+      "sensitivity": "pii"
+    }
+  ],
+  "steps": [
+    {
+      "id": "s01_sign_in_as_the_operator",
+      "intent": "sign in as the operator",
+      "action": {
+        "type": "type",
+        "value_ref": "{{ username }}",
+        "key": null,
+        "ms": null
+      },
+      "target": {
+        "strategies": [
+          {
+            "kind": "role_name",
+            "role": "textbox",
+            "name": "Username",
+            "exact": true,
+            "nth": 0
+          },
+          {
+            "kind": "anchor",
+            "anchor_text": "Username",
+            "control_role": "textbox",
+            "control_name": null
+          },
+          {
+            "kind": "text",
+            "text": "Username",
+            "role": "textbox"
+          },
+          {
+            "kind": "bbox_ratio",
+            "x": 0.2079,
+            "y": 0.2091,
+            "note": "viewport-fraction fallback captured at record time"
+          }
+        ],
+        "rationale": "Primary: accessibility role 'textbox' + name 'Username' -- stable across restyle/markup changes and matches what an operator sees. Fallback: the labelling text, for legacy rows where inputs share a role and carry no name. Last resort: viewport-fraction click point, valid only while the layout is fixed."
+      },
+      "target_rationale": "Primary: accessibility role 'textbox' + name 'Username' -- stable across restyle/markup changes and matches what an operator sees. Fallback: the labelling text, for legacy rows where inputs share a role and carry no name. Last resort: viewport-fraction click point, valid only while the layout is fixed.",
+      "risk": "safe",
+      "phase": "auth",
+      "pre": null,
+      "post": {
+        "kind": "all_of",
+        "of": [
+          {
+            "kind": "url_matches",
+            "pattern": "^/login(\\?|$)"
+          },
+          {
+            "kind": "ax_present",
+            "role": "heading",
+            "name_matches": "^Sign\\ in"
+          }
+        ]
+      },
+      "timeout_ms": 8000
+    },
+    {
+      "id": "s02_enter_the_operator_passw",
+      "intent": "enter the operator password",
+      "action": {
+        "type": "type",
+        "value_ref": "{{ password }}",
+        "key": null,
+        "ms": null
+      },
+      "target": {
+        "strategies": [
+          {
+            "kind": "role_name",
+            "role": "textbox",
+            "name": "Password",
+            "exact": true,
+            "nth": 0
+          },
+          {
+            "kind": "anchor",
+            "anchor_text": "Password",
+            "control_role": "textbox",
+            "control_name": null
+          },
+          {
+            "kind": "text",
+            "text": "Password",
+            "role": "textbox"
+          },
+          {
+            "kind": "bbox_ratio",
+            "x": 0.2079,
+            "y": 0.2429,
+            "note": "viewport-fraction fallback captured at record time"
+          }
+        ],
+        "rationale": "Primary: accessibility role 'textbox' + name 'Password' -- stable across restyle/markup changes and matches what an operator sees. Fallback: the labelling text, for legacy rows where inputs share a role and carry no name. Last resort: viewport-fraction click point, valid only while the layout is fixed."
+      },
+      "target_rationale": "Primary: accessibility role 'textbox' + name 'Password' -- stable across restyle/markup changes and matches what an operator sees. Fallback: the labelling text, for legacy rows where inputs share a role and carry no name. Last resort: viewport-fraction click point, valid only while the layout is fixed.",
+      "risk": "safe",
+      "phase": "auth",
+      "pre": null,
+      "post": {
+        "kind": "all_of",
+        "of": [
+          {
+            "kind": "url_matches",
+            "pattern": "^/login(\\?|$)"
+          },
+          {
+            "kind": "ax_present",
+            "role": "heading",
+            "name_matches": "^Sign\\ in"
+          }
+        ]
+      },
+      "timeout_ms": 8000
+    },
+    {
+      "id": "s03_submit_the_login_form",
+      "intent": "submit the login form",
+      "action": {
+        "type": "click",
+        "value_ref": null,
+        "key": null,
+        "ms": null
+      },
+      "target": {
+        "strategies": [
+          {
+            "kind": "role_name",
+            "role": "button",
+            "name": "Sign in",
+            "exact": true,
+            "nth": 0
+          },
+          {
+            "kind": "text",
+            "text": "Sign in",
+            "role": "button"
+          },
+          {
+            "kind": "bbox_ratio",
+            "x": 0.0386,
+            "y": 0.2804,
+            "note": "viewport-fraction fallback captured at record time"
+          }
+        ],
+        "rationale": "Primary: accessibility role 'button' + name 'Sign in' -- stable across restyle/markup changes and matches what an operator sees. Fallback: the labelling text, for legacy rows where inputs share a role and carry no name. Last resort: viewport-fraction click point, valid only while the layout is fixed."
+      },
+      "target_rationale": "Primary: accessibility role 'button' + name 'Sign in' -- stable across restyle/markup changes and matches what an operator sees. Fallback: the labelling text, for legacy rows where inputs share a role and carry no name. Last resort: viewport-fraction click point, valid only while the layout is fixed.",
+      "risk": "safe",
+      "phase": "auth",
+      "pre": null,
+      "post": {
+        "kind": "all_of",
+        "of": [
+          {
+            "kind": "url_matches",
+            "pattern": "^/(\\?|$)"
+          },
+          {
+            "kind": "ax_present",
+            "role": "heading",
+            "name_matches": "^Member\\ Servicing"
+          }
+        ]
+      },
+      "timeout_ms": 8000
+    },
+    {
+      "id": "s04_search_for_the_member_by",
+      "intent": "search for the member by id",
+      "action": {
+        "type": "type",
+        "value_ref": "{{ member_id }}",
+        "key": null,
+        "ms": null
+      },
+      "target": {
+        "strategies": [
+          {
+            "kind": "role_name",
+            "role": "textbox",
+            "name": "Member ID or name",
+            "exact": true,
+            "nth": 0
+          },
+          {
+            "kind": "anchor",
+            "anchor_text": "Member ID or name",
+            "control_role": "textbox",
+            "control_name": null
+          },
+          {
+            "kind": "text",
+            "text": "Member ID or name",
+            "role": "textbox"
+          },
+          {
+            "kind": "bbox_ratio",
+            "x": 0.2079,
+            "y": 0.2016,
+            "note": "viewport-fraction fallback captured at record time"
+          }
+        ],
+        "rationale": "Primary: accessibility role 'textbox' + name 'Member ID or name' -- stable across restyle/markup changes and matches what an operator sees. Fallback: the labelling text, for legacy rows where inputs share a role and carry no name. Last resort: viewport-fraction click point, valid only while the layout is fixed."
+      },
+      "target_rationale": "Primary: accessibility role 'textbox' + name 'Member ID or name' -- stable across restyle/markup changes and matches what an operator sees. Fallback: the labelling text, for legacy rows where inputs share a role and carry no name. Last resort: viewport-fraction click point, valid only while the layout is fixed.",
+      "risk": "safe",
+      "phase": "main",
+      "pre": null,
+      "post": {
+        "kind": "all_of",
+        "of": [
+          {
+            "kind": "url_matches",
+            "pattern": "^/(\\?|$)"
+          },
+          {
+            "kind": "ax_present",
+            "role": "heading",
+            "name_matches": "^Member\\ Servicing"
+          }
+        ]
+      },
+      "timeout_ms": 8000
+    },
+    {
+      "id": "s05_run_the_member_search",
+      "intent": "run the member search",
+      "action": {
+        "type": "click",
+        "value_ref": null,
+        "key": null,
+        "ms": null
+      },
+      "target": {
+        "strategies": [
+          {
+            "kind": "role_name",
+            "role": "button",
+            "name": "Search",
+            "exact": true,
+            "nth": 0
+          },
+          {
+            "kind": "text",
+            "text": "Search",
+            "role": "button"
+          },
+          {
+            "kind": "bbox_ratio",
+            "x": 0.2987,
+            "y": 0.2016,
+            "note": "viewport-fraction fallback captured at record time"
+          }
+        ],
+        "rationale": "Primary: accessibility role 'button' + name 'Search' -- stable across restyle/markup changes and matches what an operator sees. Fallback: the labelling text, for legacy rows where inputs share a role and carry no name. Last resort: viewport-fraction click point, valid only while the layout is fixed."
+      },
+      "target_rationale": "Primary: accessibility role 'button' + name 'Search' -- stable across restyle/markup changes and matches what an operator sees. Fallback: the labelling text, for legacy rows where inputs share a role and carry no name. Last resort: viewport-fraction click point, valid only while the layout is fixed.",
+      "risk": "safe",
+      "phase": "main",
+      "pre": null,
+      "post": {
+        "kind": "all_of",
+        "of": [
+          {
+            "kind": "url_matches",
+            "pattern": "^/members(\\?|$)"
+          },
+          {
+            "kind": "ax_present",
+            "role": "heading",
+            "name_matches": "^Search\\ results"
+          }
+        ]
+      },
+      "timeout_ms": 8000
+    },
+    {
+      "id": "s06_open_the_matching_member",
+      "intent": "open the matching member record",
+      "action": {
+        "type": "click",
+        "value_ref": null,
+        "key": null,
+        "ms": null
+      },
+      "target": {
+        "strategies": [
+          {
+            "kind": "role_name",
+            "role": "link",
+            "name": "Open",
+            "exact": true,
+            "nth": 0
+          },
+          {
+            "kind": "anchor",
+            "anchor_text": "{{ member_id }}",
+            "control_role": "link",
+            "control_name": null
+          },
+          {
+            "kind": "text",
+            "text": "Open",
+            "role": "link"
+          },
+          {
+            "kind": "bbox_ratio",
+            "x": 0.2408,
+            "y": 0.2598,
+            "note": "viewport-fraction fallback captured at record time"
+          }
+        ],
+        "rationale": "Primary: accessibility role 'link' + name 'Open' -- stable across restyle/markup changes and matches what an operator sees. Fallback: the labelling text, for legacy rows where inputs share a role and carry no name. Last resort: viewport-fraction click point, valid only while the layout is fixed."
+      },
+      "target_rationale": "Primary: accessibility role 'link' + name 'Open' -- stable across restyle/markup changes and matches what an operator sees. Fallback: the labelling text, for legacy rows where inputs share a role and carry no name. Last resort: viewport-fraction click point, valid only while the layout is fixed.",
+      "risk": "safe",
+      "phase": "main",
+      "pre": null,
+      "post": {
+        "kind": "all_of",
+        "of": [
+          {
+            "kind": "url_matches",
+            "pattern": "^/member/\\d+(\\?|$)"
+          },
+          {
+            "kind": "ax_present",
+            "role": "heading",
+            "name_matches": "^Member\\ \\d+"
+          }
+        ]
+      },
+      "timeout_ms": 8000
+    },
+    {
+      "id": "s07_start_the_new_sub_accoun",
+      "intent": "start the new sub-account form",
+      "action": {
+        "type": "click",
+        "value_ref": null,
+        "key": null,
+        "ms": null
+      },
+      "target": {
+        "strategies": [
+          {
+            "kind": "role_name",
+            "role": "link",
+            "name": "Open a sub-account",
+            "exact": true,
+            "nth": 0
+          },
+          {
+            "kind": "text",
+            "text": "Open a sub-account",
+            "role": "link"
+          },
+          {
+            "kind": "bbox_ratio",
+            "x": 0.0715,
+            "y": 0.4952,
+            "note": "viewport-fraction fallback captured at record time"
+          }
+        ],
+        "rationale": "Primary: accessibility role 'link' + name 'Open a sub-account' -- stable across restyle/markup changes and matches what an operator sees. Fallback: the labelling text, for legacy rows where inputs share a role and carry no name. Last resort: viewport-fraction click point, valid only while the layout is fixed."
+      },
+      "target_rationale": "Primary: accessibility role 'link' + name 'Open a sub-account' -- stable across restyle/markup changes and matches what an operator sees. Fallback: the labelling text, for legacy rows where inputs share a role and carry no name. Last resort: viewport-fraction click point, valid only while the layout is fixed.",
+      "risk": "safe",
+      "phase": "main",
+      "pre": null,
+      "post": {
+        "kind": "all_of",
+        "of": [
+          {
+            "kind": "url_matches",
+            "pattern": "^/member/\\d+/subaccount/new(\\?|$)"
+          },
+          {
+            "kind": "ax_present",
+            "role": "heading",
+            "name_matches": "^Open\\ a\\ sub\\-account"
+          }
+        ]
+      },
+      "timeout_ms": 8000
+    },
+    {
+      "id": "s08_choose_the_account_type",
+      "intent": "choose the account type",
+      "action": {
+        "type": "select",
+        "value_ref": "Savings",
+        "key": null,
+        "ms": null
+      },
+      "target": {
+        "strategies": [
+          {
+            "kind": "role_name",
+            "role": "combobox",
+            "name": "Account type",
+            "exact": true,
+            "nth": 0
+          },
+          {
+            "kind": "anchor",
+            "anchor_text": "Account type",
+            "control_role": "combobox",
+            "control_name": null
+          },
+          {
+            "kind": "text",
+            "text": "Account type",
+            "role": "combobox"
+          },
+          {
+            "kind": "bbox_ratio",
+            "x": 0.1899,
+            "y": 0.1966,
+            "note": "viewport-fraction fallback captured at record time"
+          }
+        ],
+        "rationale": "Primary: accessibility role 'combobox' + name 'Account type' -- stable across restyle/markup changes and matches what an operator sees. Fallback: the labelling text, for legacy rows where inputs share a role and carry no name. Last resort: viewport-fraction click point, valid only while the layout is fixed."
+      },
+      "target_rationale": "Primary: accessibility role 'combobox' + name 'Account type' -- stable across restyle/markup changes and matches what an operator sees. Fallback: the labelling text, for legacy rows where inputs share a role and carry no name. Last resort: viewport-fraction click point, valid only while the layout is fixed.",
+      "risk": "safe",
+      "phase": "main",
+      "pre": null,
+      "post": {
+        "kind": "all_of",
+        "of": [
+          {
+            "kind": "url_matches",
+            "pattern": "^/member/\\d+/subaccount/new(\\?|$)"
+          },
+          {
+            "kind": "ax_present",
+            "role": "heading",
+            "name_matches": "^Open\\ a\\ sub\\-account"
+          }
+        ]
+      },
+      "timeout_ms": 8000
+    },
+    {
+      "id": "s09_enter_the_opening_deposi",
+      "intent": "enter the opening deposit",
+      "action": {
+        "type": "type",
+        "value_ref": "{{ deposit }}",
+        "key": null,
+        "ms": null
+      },
+      "target": {
+        "strategies": [
+          {
+            "kind": "role_name",
+            "role": "textbox",
+            "name": "Opening deposit (USD)",
+            "exact": true,
+            "nth": 0
+          },
+          {
+            "kind": "anchor",
+            "anchor_text": "Opening deposit (USD)",
+            "control_role": "textbox",
+            "control_name": null
+          },
+          {
+            "kind": "text",
+            "text": "Opening deposit (USD)",
+            "role": "textbox"
+          },
+          {
+            "kind": "bbox_ratio",
+            "x": 0.2079,
+            "y": 0.2291,
+            "note": "viewport-fraction fallback captured at record time"
+          }
+        ],
+        "rationale": "Primary: accessibility role 'textbox' + name 'Opening deposit (USD)' -- stable across restyle/markup changes and matches what an operator sees. Fallback: the labelling text, for legacy rows where inputs share a role and carry no name. Last resort: viewport-fraction click point, valid only while the layout is fixed."
+      },
+      "target_rationale": "Primary: accessibility role 'textbox' + name 'Opening deposit (USD)' -- stable across restyle/markup changes and matches what an operator sees. Fallback: the labelling text, for legacy rows where inputs share a role and carry no name. Last resort: viewport-fraction click point, valid only while the layout is fixed.",
+      "risk": "safe",
+      "phase": "main",
+      "pre": null,
+      "post": {
+        "kind": "all_of",
+        "of": [
+          {
+            "kind": "url_matches",
+            "pattern": "^/member/\\d+/subaccount/new(\\?|$)"
+          },
+          {
+            "kind": "ax_present",
+            "role": "heading",
+            "name_matches": "^Open\\ a\\ sub\\-account"
+          }
+        ]
+      },
+      "timeout_ms": 8000
+    },
+    {
+      "id": "s10_advance_to_the_confirmat",
+      "intent": "advance to the confirmation screen",
+      "action": {
+        "type": "click",
+        "value_ref": null,
+        "key": null,
+        "ms": null
+      },
+      "target": {
+        "strategies": [
+          {
+            "kind": "role_name",
+            "role": "button",
+            "name": "Review",
+            "exact": true,
+            "nth": 0
+          },
+          {
+            "kind": "text",
+            "text": "Review",
+            "role": "button"
+          },
+          {
+            "kind": "bbox_ratio",
+            "x": 0.0397,
+            "y": 0.2666,
+            "note": "viewport-fraction fallback captured at record time"
+          }
+        ],
+        "rationale": "Primary: accessibility role 'button' + name 'Review' -- stable across restyle/markup changes and matches what an operator sees. Fallback: the labelling text, for legacy rows where inputs share a role and carry no name. Last resort: viewport-fraction click point, valid only while the layout is fixed."
+      },
+      "target_rationale": "Primary: accessibility role 'button' + name 'Review' -- stable across restyle/markup changes and matches what an operator sees. Fallback: the labelling text, for legacy rows where inputs share a role and carry no name. Last resort: viewport-fraction click point, valid only while the layout is fixed.",
+      "risk": "safe",
+      "phase": "main",
+      "pre": null,
+      "post": {
+        "kind": "all_of",
+        "of": [
+          {
+            "kind": "url_matches",
+            "pattern": "^/member/\\d+/subaccount/new(\\?|$)"
+          },
+          {
+            "kind": "ax_present",
+            "role": "heading",
+            "name_matches": "^Confirm\\ new\\ sub\\-account"
+          }
+        ]
+      },
+      "timeout_ms": 8000
+    },
+    {
+      "id": "s11_read_the_account_number",
+      "intent": "read the account number assigned on the confirmation screen",
+      "action": {
+        "type": "read",
+        "value_ref": null,
+        "key": null,
+        "ms": null
+      },
+      "target": {
+        "strategies": [
+          {
+            "kind": "anchor",
+            "anchor_text": "New account number",
+            "control_role": "cell",
+            "control_name": null
+          },
+          {
+            "kind": "bbox_ratio",
+            "x": 0.1893,
+            "y": 0.2973,
+            "note": "viewport-fraction fallback captured at record time"
+          }
+        ],
+        "rationale": "Primary: accessibility role 'cell' + name '<redacted:e2e3368d>' -- stable across restyle/markup changes and matches what an operator sees. Fallback: the labelling text, for legacy rows where inputs share a role and carry no name. Last resort: viewport-fraction click point, valid only while the layout is fixed."
+      },
+      "target_rationale": "Primary: accessibility role 'cell' + name '<redacted:e2e3368d>' -- stable across restyle/markup changes and matches what an operator sees. Fallback: the labelling text, for legacy rows where inputs share a role and carry no name. Last resort: viewport-fraction click point, valid only while the layout is fixed.",
+      "risk": "safe",
+      "phase": "main",
+      "pre": null,
+      "post": {
+        "kind": "all_of",
+        "of": [
+          {
+            "kind": "url_matches",
+            "pattern": "^/member/\\d+/subaccount/new(\\?|$)"
+          },
+          {
+            "kind": "ax_present",
+            "role": "heading",
+            "name_matches": "^Confirm\\ new\\ sub\\-account"
+          }
+        ]
+      },
+      "timeout_ms": 8000
+    },
+    {
+      "id": "s12_create_the_sub_account_r",
+      "intent": "create the sub-account (risky, operator-approved)",
+      "action": {
+        "type": "click",
+        "value_ref": null,
+        "key": null,
+        "ms": null
+      },
+      "target": {
+        "strategies": [
+          {
+            "kind": "role_name",
+            "role": "button",
+            "name": "Confirm and create account",
+            "exact": true,
+            "nth": 0
+          },
+          {
+            "kind": "text",
+            "text": "Confirm and create account",
+            "role": "button"
+          },
+          {
+            "kind": "bbox_ratio",
+            "x": 0.0858,
+            "y": 0.3766,
+            "note": "viewport-fraction fallback captured at record time"
+          }
+        ],
+        "rationale": "Primary: accessibility role 'button' + name 'Confirm and create account' -- stable across restyle/markup changes and matches what an operator sees. Fallback: the labelling text, for legacy rows where inputs share a role and carry no name. Last resort: viewport-fraction click point, valid only while the layout is fixed."
+      },
+      "target_rationale": "Primary: accessibility role 'button' + name 'Confirm and create account' -- stable across restyle/markup changes and matches what an operator sees. Fallback: the labelling text, for legacy rows where inputs share a role and carry no name. Last resort: viewport-fraction click point, valid only while the layout is fixed.",
+      "risk": "risky",
+      "phase": "main",
+      "pre": null,
+      "post": {
+        "kind": "all_of",
+        "of": [
+          {
+            "kind": "url_matches",
+            "pattern": "^/member/\\d+/subaccount/create(\\?|$)"
+          },
+          {
+            "kind": "ax_present",
+            "role": "heading",
+            "name_matches": "^Sub\\-account\\ opened"
+          }
+        ]
+      },
+      "timeout_ms": 8000
+    },
+    {
+      "id": "s13_verify_the_account_numbe",
+      "intent": "verify the account number after creation",
+      "action": {
+        "type": "read",
+        "value_ref": null,
+        "key": null,
+        "ms": null
+      },
+      "target": {
+        "strategies": [
+          {
+            "kind": "anchor",
+            "anchor_text": "New account number",
+            "control_role": "cell",
+            "control_name": null
+          },
+          {
+            "kind": "bbox_ratio",
+            "x": 0.1893,
+            "y": 0.266,
+            "note": "viewport-fraction fallback captured at record time"
+          }
+        ],
+        "rationale": "Primary: accessibility role 'cell' + name '<redacted:e2e3368d>' -- stable across restyle/markup changes and matches what an operator sees. Fallback: the labelling text, for legacy rows where inputs share a role and carry no name. Last resort: viewport-fraction click point, valid only while the layout is fixed."
+      },
+      "target_rationale": "Primary: accessibility role 'cell' + name '<redacted:e2e3368d>' -- stable across restyle/markup changes and matches what an operator sees. Fallback: the labelling text, for legacy rows where inputs share a role and carry no name. Last resort: viewport-fraction click point, valid only while the layout is fixed.",
+      "risk": "safe",
+      "phase": "main",
+      "pre": null,
+      "post": {
+        "kind": "all_of",
+        "of": [
+          {
+            "kind": "url_matches",
+            "pattern": "^/member/\\d+/subaccount/create(\\?|$)"
+          },
+          {
+            "kind": "ax_present",
+            "role": "heading",
+            "name_matches": "^Sub\\-account\\ opened"
+          }
+        ]
+      },
+      "timeout_ms": 8000
+    }
+  ],
+  "checkpoint": {
+    "kind": "all_of",
+    "of": [
+      {
+        "kind": "url_matches",
+        "pattern": "^/member/\\d+/subaccount/create(\\?|$)"
+      },
+      {
+        "kind": "ax_present",
+        "role": "heading",
+        "name_matches": "^Sub\\-account\\ opened"
+      }
+    ]
+  },
+  "known_outcomes": [
+    {
+      "name": "member_not_found",
+      "detect": {
+        "kind": "any_of",
+        "of": [
+          {
+            "kind": "ax_present",
+            "role": "alert",
+            "name_matches": "[Nn]o member (found|exists)"
+          },
+          {
+            "kind": "text_matches",
+            "pattern": "[Nn]o member (found|exists) (matching|with)"
+          }
+        ]
+      },
+      "returns": {
+        "found": false
+      },
+      "terminal": true,
+      "description": "The searched member id / name matched no record. A legitimate answer the caller must handle, not an error."
+    },
+    {
+      "name": "permission_denied",
+      "detect": {
+        "kind": "any_of",
+        "of": [
+          {
+            "kind": "text_matches",
+            "pattern": "Permission denied"
+          },
+          {
+            "kind": "text_matches",
+            "pattern": "flagged restricted"
+          },
+          {
+            "kind": "ax_present",
+            "role": "heading",
+            "name_matches": "Permission denied"
+          }
+        ]
+      },
+      "returns": {
+        "permitted": false
+      },
+      "terminal": true,
+      "description": "The member is flagged restricted / the operator lacks rights. A business outcome: the caller may need a supervisor override."
+    }
+  ],
+  "recovery": [
+    {
+      "name": "session_timeout",
+      "detect": {
+        "kind": "all_of",
+        "of": [
+          {
+            "kind": "url_matches",
+            "pattern": "/login"
+          },
+          {
+            "kind": "text_matches",
+            "pattern": "session has expired"
+          }
+        ]
+      },
+      "handle": {
+        "type": "reauth",
+        "target": null,
+        "wait_ms": 1500
+      },
+      "max_attempts": 2,
+      "description": "Session expired mid-flow -> bounced to the login screen. Re-authenticate and retry the step."
+    },
+    {
+      "name": "maintenance_notice",
+      "detect": {
+        "kind": "all_of",
+        "of": [
+          {
+            "kind": "dialog_open",
+            "expected": true
+          },
+          {
+            "kind": "text_matches",
+            "pattern": "[Ss]cheduled maintenance|System notice"
+          }
+        ]
+      },
+      "handle": {
+        "type": "dismiss_dialog",
+        "target": {
+          "strategies": [
+            {
+              "kind": "role_name",
+              "role": "button",
+              "name": "Acknowledge",
+              "exact": true,
+              "nth": 0
+            }
+          ],
+          "rationale": "The interstitial's only affordance."
+        },
+        "wait_ms": 1500
+      },
+      "max_attempts": 2,
+      "description": "An unscheduled 'system notice' interstitial. Acknowledge it and carry on."
+    },
+    {
+      "name": "transient_slow_load",
+      "detect": {
+        "kind": "text_matches",
+        "pattern": "^\\s*$"
+      },
+      "handle": {
+        "type": "wait_retry",
+        "target": null,
+        "wait_ms": 2500
+      },
+      "max_attempts": 2,
+      "description": "A screen that has not finished rendering its expected content yet. Wait once and re-check before failing."
+    }
+  ],
+  "approval": {
+    "state": "draft",
+    "approved_by": null,
+    "note": ""
+  },
+  "provenance": {
+    "discovered_by_model": "scripted",
+    "discovered_at": "2026-09-09T06:46:45+00:00",
+    "trace_hash": "3256b2467f59f24b9102a202f7496bbaed207c7f0461b73a3635b8e82d916283",
+    "raw_step_count": 14,
+    "stability": null
+  }
+}

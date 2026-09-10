@@ -1,0 +1,412 @@
+{
+  "goal": "open a new Savings sub-account for member {{member_id}} with a {{deposit}} opening deposit and confirm it",
+  "target": "http://localhost:5050",
+  "model": "scripted",
+  "policy_ref": "",
+  "params_hint": {
+    "member_id": "100042",
+    "deposit": "250.00",
+    "username": "<secret>",
+    "password": "<redacted:bcd20137>"
+  },
+  "started_at": 1788936400.115536,
+  "finished_at": 1788936404.708283,
+  "outcome": "success",
+  "summary": "Signed in, opened a Savings sub-account for the member with a 250.00 opening deposit, and confirmed creation.",
+  "outputs": {
+    "new_account_number": "<redacted:e2e3368d>",
+    "created_account_number": "<redacted:e2e3368d>"
+  },
+  "escalation": null,
+  "steps": [
+    {
+      "index": 1,
+      "tool": "type_text",
+      "intent": "sign in as the operator",
+      "target": "textbox:Username",
+      "tool_input": {
+        "role": "textbox",
+        "name": "Username",
+        "why": "sign in as the operator",
+        "text": "<redacted>"
+      },
+      "resolved": true,
+      "matched_strategy": "role_name",
+      "strategy_index": 0,
+      "policy_decision": "allow",
+      "error": null,
+      "obs_after": {
+        "url": "http://localhost:5050/login?expired=1",
+        "title": "MeridianCU CoreAdmin",
+        "http_status": 200,
+        "dialog": null,
+        "headings": [
+          "Sign in"
+        ],
+        "alerts": [
+          "status: Your session has expired. Please sign in again."
+        ],
+        "node_count": 5
+      }
+    },
+    {
+      "index": 2,
+      "tool": "type_text",
+      "intent": "enter the operator password",
+      "target": "textbox:Password",
+      "tool_input": {
+        "role": "textbox",
+        "name": "Password",
+        "why": "enter the operator password",
+        "text": "<redacted>"
+      },
+      "resolved": true,
+      "matched_strategy": "role_name",
+      "strategy_index": 0,
+      "policy_decision": "allow",
+      "error": null,
+      "obs_after": {
+        "url": "http://localhost:5050/login?expired=1",
+        "title": "MeridianCU CoreAdmin",
+        "http_status": 200,
+        "dialog": null,
+        "headings": [
+          "Sign in"
+        ],
+        "alerts": [
+          "status: Your session has expired. Please sign in again."
+        ],
+        "node_count": 5
+      }
+    },
+    {
+      "index": 3,
+      "tool": "click",
+      "intent": "submit the login form",
+      "target": "button:Sign in",
+      "tool_input": {
+        "role": "button",
+        "name": "Sign in",
+        "why": "submit the login form"
+      },
+      "resolved": true,
+      "matched_strategy": "role_name",
+      "strategy_index": 0,
+      "policy_decision": "allow",
+      "error": null,
+      "obs_after": {
+        "url": "http://localhost:5050/",
+        "title": "MeridianCU CoreAdmin",
+        "http_status": 200,
+        "dialog": null,
+        "headings": [
+          "Member Servicing",
+          "Recent activity"
+        ],
+        "alerts": [],
+        "node_count": 11
+      }
+    },
+    {
+      "index": 4,
+      "tool": "type_text",
+      "intent": "search for the member by id",
+      "target": "textbox:Member ID or name",
+      "tool_input": {
+        "role": "textbox",
+        "name": "Member ID or name",
+        "why": "search for the member by id",
+        "text": "<redacted>"
+      },
+      "resolved": true,
+      "matched_strategy": "role_name",
+      "strategy_index": 0,
+      "policy_decision": "allow",
+      "error": null,
+      "obs_after": {
+        "url": "http://localhost:5050/",
+        "title": "MeridianCU CoreAdmin",
+        "http_status": 200,
+        "dialog": null,
+        "headings": [
+          "Member Servicing",
+          "Recent activity"
+        ],
+        "alerts": [],
+        "node_count": 11
+      }
+    },
+    {
+      "index": 5,
+      "tool": "click",
+      "intent": "run the member search",
+      "target": "button:Search",
+      "tool_input": {
+        "role": "button",
+        "name": "Search",
+        "why": "run the member search"
+      },
+      "resolved": true,
+      "matched_strategy": "role_name",
+      "strategy_index": 0,
+      "policy_decision": "allow",
+      "error": null,
+      "obs_after": {
+        "url": "http://localhost:5050/members?q=100042",
+        "title": "MeridianCU CoreAdmin",
+        "http_status": 200,
+        "dialog": null,
+        "headings": [
+          "Search results"
+        ],
+        "alerts": [],
+        "node_count": 11
+      }
+    },
+    {
+      "index": 6,
+      "tool": "click",
+      "intent": "open the matching member record",
+      "target": "link:Open",
+      "tool_input": {
+        "role": "link",
+        "name": "Open",
+        "why": "open the matching member record"
+      },
+      "resolved": true,
+      "matched_strategy": "role_name",
+      "strategy_index": 0,
+      "policy_decision": "allow",
+      "error": null,
+      "obs_after": {
+        "url": "http://localhost:5050/member/100042",
+        "title": "Jordan Rivera -- MeridianCU CoreAdmin",
+        "http_status": 200,
+        "dialog": null,
+        "headings": [
+          "Member 100042 \u2014 Jordan Rivera",
+          "Accounts"
+        ],
+        "alerts": [],
+        "node_count": 22
+      }
+    },
+    {
+      "index": 7,
+      "tool": "click",
+      "intent": "start the new sub-account form",
+      "target": "link:Open a sub-account",
+      "tool_input": {
+        "role": "link",
+        "name": "Open a sub-account",
+        "why": "start the new sub-account form"
+      },
+      "resolved": true,
+      "matched_strategy": "role_name",
+      "strategy_index": 0,
+      "policy_decision": "allow",
+      "error": null,
+      "obs_after": {
+        "url": "http://localhost:5050/member/100042/subaccount/new",
+        "title": "MeridianCU CoreAdmin",
+        "http_status": 200,
+        "dialog": null,
+        "headings": [
+          "Open a sub-account \u2014 Jordan Rivera (100042)"
+        ],
+        "alerts": [],
+        "node_count": 10
+      }
+    },
+    {
+      "index": 8,
+      "tool": "select_option",
+      "intent": "choose the account type",
+      "target": "combobox:Account type",
+      "tool_input": {
+        "role": "combobox",
+        "name": "Account type",
+        "value": "Savings",
+        "why": "choose the account type"
+      },
+      "resolved": true,
+      "matched_strategy": "role_name",
+      "strategy_index": 0,
+      "policy_decision": "allow",
+      "error": null,
+      "obs_after": {
+        "url": "http://localhost:5050/member/100042/subaccount/new",
+        "title": "MeridianCU CoreAdmin",
+        "http_status": 200,
+        "dialog": null,
+        "headings": [
+          "Open a sub-account \u2014 Jordan Rivera (100042)"
+        ],
+        "alerts": [],
+        "node_count": 10
+      }
+    },
+    {
+      "index": 9,
+      "tool": "type_text",
+      "intent": "enter the opening deposit",
+      "target": "textbox:Opening deposit (USD)",
+      "tool_input": {
+        "role": "textbox",
+        "name": "Opening deposit (USD)",
+        "why": "enter the opening deposit",
+        "text": "<redacted>"
+      },
+      "resolved": true,
+      "matched_strategy": "role_name",
+      "strategy_index": 0,
+      "policy_decision": "allow",
+      "error": null,
+      "obs_after": {
+        "url": "http://localhost:5050/member/100042/subaccount/new",
+        "title": "MeridianCU CoreAdmin",
+        "http_status": 200,
+        "dialog": null,
+        "headings": [
+          "Open a sub-account \u2014 Jordan Rivera (100042)"
+        ],
+        "alerts": [],
+        "node_count": 10
+      }
+    },
+    {
+      "index": 10,
+      "tool": "click",
+      "intent": "advance to the confirmation screen",
+      "target": "button:Review",
+      "tool_input": {
+        "role": "button",
+        "name": "Review",
+        "why": "advance to the confirmation screen"
+      },
+      "resolved": true,
+      "matched_strategy": "role_name",
+      "strategy_index": 0,
+      "policy_decision": "allow",
+      "error": null,
+      "obs_after": {
+        "url": "http://localhost:5050/member/100042/subaccount/new",
+        "title": "MeridianCU CoreAdmin",
+        "http_status": 200,
+        "dialog": null,
+        "headings": [
+          "Confirm new sub-account"
+        ],
+        "alerts": [
+          "status: Review the details below. This screen is the confirmation checkpoint."
+        ],
+        "node_count": 14
+      }
+    },
+    {
+      "index": 11,
+      "tool": "read_value",
+      "intent": "read the account number assigned on the confirmation screen",
+      "target": "cell:<redacted:e2e3368d>",
+      "tool_input": {
+        "label": "new_account_number",
+        "role": "cell",
+        "name": "<redacted:e2e3368d>",
+        "why": "read the account number assigned on the confirmation screen"
+      },
+      "resolved": true,
+      "matched_strategy": "role_name",
+      "strategy_index": 0,
+      "policy_decision": "allow",
+      "error": null,
+      "obs_after": {
+        "url": "http://localhost:5050/member/100042/subaccount/new",
+        "title": "MeridianCU CoreAdmin",
+        "http_status": 200,
+        "dialog": null,
+        "headings": [
+          "Confirm new sub-account"
+        ],
+        "alerts": [
+          "status: Review the details below. This screen is the confirmation checkpoint."
+        ],
+        "node_count": 14
+      }
+    },
+    {
+      "index": 12,
+      "tool": "click",
+      "intent": "create the sub-account (risky, operator-approved)",
+      "target": "button:Confirm and create account",
+      "tool_input": {
+        "role": "button",
+        "name": "Confirm and create account",
+        "why": "create the sub-account (risky, operator-approved)"
+      },
+      "resolved": true,
+      "matched_strategy": "role_name",
+      "strategy_index": 0,
+      "policy_decision": "confirm:approved",
+      "error": null,
+      "obs_after": {
+        "url": "http://localhost:5050/member/100042/subaccount/create",
+        "title": "MeridianCU CoreAdmin",
+        "http_status": 200,
+        "dialog": null,
+        "headings": [
+          "Sub-account opened"
+        ],
+        "alerts": [
+          "status: The Savings sub-account has been created for Jordan Rivera."
+        ],
+        "node_count": 12
+      }
+    },
+    {
+      "index": 13,
+      "tool": "read_value",
+      "intent": "verify the account number after creation",
+      "target": "cell:<redacted:e2e3368d>",
+      "tool_input": {
+        "label": "created_account_number",
+        "role": "cell",
+        "name": "<redacted:e2e3368d>",
+        "why": "verify the account number after creation"
+      },
+      "resolved": true,
+      "matched_strategy": "role_name",
+      "strategy_index": 0,
+      "policy_decision": "allow",
+      "error": null,
+      "obs_after": {
+        "url": "http://localhost:5050/member/100042/subaccount/create",
+        "title": "MeridianCU CoreAdmin",
+        "http_status": 200,
+        "dialog": null,
+        "headings": [
+          "Sub-account opened"
+        ],
+        "alerts": [
+          "status: The Savings sub-account has been created for Jordan Rivera."
+        ],
+        "node_count": 12
+      }
+    },
+    {
+      "index": 14,
+      "tool": "finish",
+      "intent": "",
+      "target": null,
+      "tool_input": {
+        "summary": "Signed in, opened a Savings sub-account for the member with a 250.00 opening deposit, and confirmed creation.",
+        "outputs": {}
+      },
+      "resolved": false,
+      "matched_strategy": null,
+      "strategy_index": null,
+      "policy_decision": null,
+      "error": null,
+      "obs_after": null
+    }
+  ]
+}

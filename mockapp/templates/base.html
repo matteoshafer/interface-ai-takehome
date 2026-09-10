@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>{% block title %}{{ t.brand }}{% endblock %}</title>
+  <style>
+    /* Intentionally plain -- this is a 2000s-era internal tool. */
+    body { font-family: Verdana, Geneva, sans-serif; font-size: 13px; margin: 0;
+           background: #e8e8e8; color: #1a1a1a; }
+    .masthead { background: #1f3a5f; color: #fff; padding: 8px 14px; font-weight: bold; }
+    .wrap { padding: 14px; }
+    table.layout { width: 100%; border-collapse: collapse; }
+    table.grid { border-collapse: collapse; background: #fff; }
+    table.grid th, table.grid td { border: 1px solid #b0b0b0; padding: 4px 8px; text-align: left; }
+    table.grid th { background: #d5deea; }
+    .fld { margin: 6px 0; }
+    .fld label { display: inline-block; width: 170px; }
+    .btn { padding: 4px 12px; }
+    .err { background: #ffe6e6; border: 1px solid #cc0000; padding: 6px 10px; margin: 8px 0; }
+    .note { background: #fff8d5; border: 1px solid #d0b000; padding: 6px 10px; margin: 8px 0; }
+    .modal { background: #fff; border: 3px solid #1f3a5f; padding: 14px; margin: 10px 0;
+             max-width: 480px; }
+    a { color: #1f3a5f; }
+  </style>
+</head>
+<body>
+  <div class="masthead">{{ t.brand }}{% if session.get('operator') %} &nbsp;|&nbsp; operator: {{ session['operator'] }} &nbsp;|&nbsp; <a style="color:#cde" href="{{ url_for('logout') }}">Sign out</a>{% endif %}</div>
+  <div class="wrap">
+    {% block body %}{% endblock %}
+  </div>
+</body>
+</html>

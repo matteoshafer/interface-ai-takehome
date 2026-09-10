@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block body %}
+{# west-tenant-only interstitial: a step the core tenant's capability never saw #}
+<h1>Select servicing branch</h1>
+<p>Westland FCU requires a home branch for every new sub-account.</p>
+<form method="post" action="{{ url_for('subaccount_new', member_id=m.member_id) }}">
+  <input type="hidden" name="kind" value="{{ kind }}">
+  <input type="hidden" name="deposit" value="{{ deposit }}">
+  <div class="fld">
+    <label for="b">Home branch</label>
+    <select name="branch" id="b">
+      <option value="">-- select --</option>
+      <option value="Downtown">Downtown</option>
+      <option value="Northgate">Northgate</option>
+      <option value="Airport">Airport</option>
+    </select>
+  </div>
+  <div class="fld"><button class="btn" type="submit">Continue</button></div>
+</form>
+{% endblock %}

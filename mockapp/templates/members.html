@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block body %}
+{% if dialog %}{% include "_dialog.html" %}{% endif %}
+<h1>Search results</h1>
+<p><a href="{{ url_for('home') }}">&laquo; New search</a></p>
+{% if not q %}
+  <div class="note">Enter a {{ t.member_label }} or name to search.</div>
+{% elif results %}
+  <p>{{ results|length }} member(s) matching &ldquo;{{ q }}&rdquo;.</p>
+  <table class="grid">
+    <tr><th>{{ t.member_label }}</th><th>Name</th><th>Status</th><th></th></tr>
+    {% for m in results %}
+    <tr>
+      <td>{{ m.member_id }}</td>
+      <td>{{ m.name }}</td>
+      <td>{{ m.status }}</td>
+      <td><a href="{{ url_for('member_detail', member_id=m.member_id) }}">Open</a></td>
+    </tr>
+    {% endfor %}
+  </table>
+{% else %}
+  <div class="err" role="alert">No member found matching &ldquo;{{ q }}&rdquo;.</div>
+{% endif %}
+{% endblock %}
