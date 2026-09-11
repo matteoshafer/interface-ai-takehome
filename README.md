@@ -150,7 +150,7 @@ outcomes rather than separately demonstrated scenarios.
 **never** the LLM. The test suite runs the mock app in-process too:
 
 ```bash
-pytest -m "not integration"     # 32 unit tests, no browser (~0.5s)
+pytest -m "not integration"     # 33 unit tests, no browser (~0.5s)
 pytest -m integration           # 25 tests, needs a browser (~100s)
 ```
 
