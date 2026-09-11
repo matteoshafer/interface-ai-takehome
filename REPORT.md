@@ -143,20 +143,38 @@ Evidence for every scenario is in `evidence/` — including
   only `locate` and the act primitives are re-implemented.
 The replay engine, schema, policy and error taxonomy do not change.
 
-**Multi-tenant reuse.** Capabilities are keyed by `app_id`, not tenant
-(`tenant_id: null` = the base). A `TenantOverlay` (designed, not built) is
-`{app_id, tenant_id, version_range, overrides: {step_id: {target_append |
-value_ref | risk}, checkpoint?, policy_ref?}}`; replay merges base + overlay. So
-a tenant that renames "Member ID" to "Account holder #" or inserts one extra
-interstitial (both present in the mock's `?tenant=west` variant) needs a small
-overlay, not a re-recording.
+**Multi-tenant reuse — built, not just designed.** Capabilities are keyed by
+`app_id`, not tenant (`tenant_id: null` = the base). `cua/artifact/tenant_overlay.py`
+implements the merge: a `TenantOverlay` is `{app_id, tenant_id,
+base_capability_id, entry_suffix, step_overrides: {step_id: {target?,
+value_ref?, risk?, post?}}, insert_steps: [{after, step}], checkpoint?}`;
+`apply_overlay(capability, overlay)` deep-merges the two and returns a new,
+never-persisted `Capability` — the base artifact on disk is untouched.
+`cua replay <cap> --tenant west` resolves `overlays/west/<id>.json` by
+convention and merges before replay.
 
-**Drift detection & management.** Replay already records, per step, the matched
-strategy rank; extend that with an AX-structure fingerprint of the entry screen
-stored in `provenance.stability`. Sustained fall-through for one tenant → flag
-"specialize this capability for tenant X". Entry-fingerprint mismatch beyond the
-overlay's `version_range` → route that tenant to re-discovery. None of this
-needs per-tenant infrastructure — it's signal emitted by the normal replay path.
+**Demonstrated live** (`demo/tenant_overlay_demo.py`, `evidence/replay-tenant-*`):
+Westland FCU (`?tenant=west` on the mock app) relabels the member-search field
+from "Member ID" to "Account Holder #". Replaying `lookup-savings-balance`
+**unmodified** against `west` still succeeds — but the field's `role_name` and
+`anchor` strategies now miss on the new label, so resolution falls through to
+the last-resort `bbox_ratio` strategy (rank 3). That fall-through *is* the drift
+signal: `evidence/replay-tenant-west-no-overlay/` shows it happening, live. A
+four-line overlay (one `step_overrides` entry, no re-recording) restores rank-0
+semantic targeting — `evidence/replay-tenant-west/`. Both replays return the
+identical output; only the targeting robustness differs.
+
+**Drift detection & management (design for the parts not built).** The
+matched-strategy rank recorded on every step (shown above) is already a
+per-step drift signal; extending it into a per-tenant health check just means
+aggregating those ranks in `provenance.stability` across runs and flagging
+"specialize this capability for tenant X" when a tenant sustains rank > 0 on a
+step the base capability resolves at rank 0. An AX-structure fingerprint of the
+entry screen, checked against a `version_range` on the overlay, would route a
+tenant whose app version drifted further than the overlay accounts for to
+re-discovery instead of a silent wrong-screen failure. Neither needs per-tenant
+infrastructure beyond what already exists — it's signal the normal replay path
+already emits, aggregated.
 
 ## 5. Escalation & handoff
 
@@ -247,16 +265,21 @@ Deliberately not built, each at a clean, documented seam:
   would have made the artifact look better and the demonstration less honest.
 - **Legacy-frameset and desktop surfaces**: design only (§4); `WebSurface` is the
   reference implementation.
-- **Multi-tenant**: the schema (`app_id`/`tenant_id`), the `TenantOverlay` model
-  and one variant app (`?tenant=west`) exist; the overlay merge and a tenant
-  registry are not built.
+- **A tenant registry / auto-detection of which overlay applies**: the merge
+  mechanism itself is built and demonstrated (§4); what's *not* built is the
+  infrastructure a real deployment would put in front of it — a lookup service
+  mapping (tenant, app) → overlay, a `version_range` compatibility check, more
+  than one tenant. That's exactly the "scaling infrastructure" the brief says
+  not to build prematurely; the single `--tenant west` CLI flag is the seam it
+  would plug into.
 - **Operator console**: real queue + control-transfer mechanism, minimal UI.
 - **Assisted single-step LLM fallback on replay failure**, **confidence/approval
   scoring from multi-run stability**, and **route canonicalization** are sketched
   in the schema (`provenance.stability`, `approval`) but not implemented.
 - **Queues / workers / persistence**: single process, JSON on disk.
 
-**What I'd do next, in order**: (1) the `TenantOverlay` merge + the `west`
-variant demo end-to-end; (2) multi-run stability scoring feeding an
-`draft→approved` gate; (3) a bounded, policy-checked single-step LLM recovery on
-replay failure, recorded as evidence.
+**What I'd do next, in order**: (1) aggregate the matched-strategy-rank signal
+across runs into `provenance.stability` and gate `draft→approved` on it;
+(2) a `version_range` check + a second overlay, to show the same mechanism
+handling drift *and* multi-tenant reuse together; (3) a bounded, policy-checked
+single-step LLM recovery on replay failure, recorded as evidence.

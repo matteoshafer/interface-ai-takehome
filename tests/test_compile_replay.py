@@ -103,3 +103,21 @@ def test_replay_hard_failure_reports_debuggable_context(capability, policy, reda
     assert r.error_class == "app_error"
     assert r.failed_step == nav
     assert r.evidence_dir and r.expected and r.observed
+
+
+def test_replay_surface_exception_becomes_action_failed_not_a_crash(
+        capability, policy, redactor, tmp_path, mock_base_url):
+    """A resolved-but-unusable control (only a bbox_ratio match, on a `read`
+    step) must surface as a structured failure, never propagate as a raw
+    exception out of `replay()`."""
+    read_step = next(s for s in capability.steps if s.action.type == "read")
+    stripped = read_step.target.model_copy(
+        update={"strategies": read_step.target.strategies[-1:]})  # bbox_ratio only
+    capability.steps[capability.steps.index(read_step)] = \
+        read_step.model_copy(update={"target": stripped})
+
+    r = _replay(capability, {"member_id": "100042", **CREDS}, policy, redactor,
+               tmp_path, mock_base_url)
+    assert r.outcome == "failure"
+    assert r.error_class == "action_failed"
+    assert r.failed_step == read_step.id

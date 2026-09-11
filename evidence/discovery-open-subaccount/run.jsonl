@@ -1,15 +1,15 @@
-{"t_ms": 1831, "kind": "observe", "step": 1, "url": "http://localhost:5050/login?expired=1", "title": "MeridianCU CoreAdmin", "dialog": null, "scripted": true}
-{"t_ms": 1874, "kind": "observe", "step": 2, "url": "http://localhost:5050/login?expired=1", "title": "MeridianCU CoreAdmin", "dialog": null, "scripted": true}
-{"t_ms": 1906, "kind": "observe", "step": 3, "url": "http://localhost:5050/login?expired=1", "title": "MeridianCU CoreAdmin", "dialog": null, "scripted": true}
-{"t_ms": 2542, "kind": "observe", "step": 4, "url": "http://localhost:5050/", "title": "MeridianCU CoreAdmin", "dialog": null, "scripted": true}
-{"t_ms": 2574, "kind": "observe", "step": 5, "url": "http://localhost:5050/", "title": "MeridianCU CoreAdmin", "dialog": null, "scripted": true}
-{"t_ms": 3195, "kind": "observe", "step": 6, "url": "http://localhost:5050/members?q=100042", "title": "MeridianCU CoreAdmin", "dialog": null, "scripted": true}
-{"t_ms": 3796, "kind": "observe", "step": 7, "url": "http://localhost:5050/member/100042", "title": "Jordan Rivera -- MeridianCU CoreAdmin", "dialog": null, "scripted": true}
-{"t_ms": 4394, "kind": "observe", "step": 8, "url": "http://localhost:5050/member/100042/subaccount/new", "title": "MeridianCU CoreAdmin", "dialog": null, "scripted": true}
-{"t_ms": 4440, "kind": "observe", "step": 9, "url": "http://localhost:5050/member/100042/subaccount/new", "title": "MeridianCU CoreAdmin", "dialog": null, "scripted": true}
-{"t_ms": 4473, "kind": "observe", "step": 10, "url": "http://localhost:5050/member/100042/subaccount/new", "title": "MeridianCU CoreAdmin", "dialog": null, "scripted": true}
-{"t_ms": 5097, "kind": "observe", "step": 11, "url": "http://localhost:5050/member/100042/subaccount/new", "title": "MeridianCU CoreAdmin", "dialog": null, "scripted": true}
-{"t_ms": 5142, "kind": "observe", "step": 12, "url": "http://localhost:5050/member/100042/subaccount/new", "title": "MeridianCU CoreAdmin", "dialog": null, "scripted": true}
-{"t_ms": 5145, "kind": "risky_action", "control": "Confirm and create account", "approved": true, "reason": "risky control 'Confirm and create account' matches /(?i)\\b(confirm and create|create account|transfer|post|approve|delete|close account)\\b/ -> confirm"}
-{"t_ms": 5780, "kind": "observe", "step": 13, "url": "http://localhost:5050/member/100042/subaccount/create", "title": "MeridianCU CoreAdmin", "dialog": null, "scripted": true}
-{"t_ms": 5825, "kind": "observe", "step": 14, "url": "http://localhost:5050/member/100042/subaccount/create", "title": "MeridianCU CoreAdmin", "dialog": null, "scripted": true}
+{"t_ms": 2088, "kind": "observe", "step": 1, "url": "http://localhost:5050/login?expired=1", "title": "MeridianCU CoreAdmin", "dialog": null, "scripted": true}
+{"t_ms": 2133, "kind": "observe", "step": 2, "url": "http://localhost:5050/login?expired=1", "title": "MeridianCU CoreAdmin", "dialog": null, "scripted": true}
+{"t_ms": 2182, "kind": "observe", "step": 3, "url": "http://localhost:5050/login?expired=1", "title": "MeridianCU CoreAdmin", "dialog": null, "scripted": true}
+{"t_ms": 2820, "kind": "observe", "step": 4, "url": "http://localhost:5050/", "title": "MeridianCU CoreAdmin", "dialog": null, "scripted": true}
+{"t_ms": 2850, "kind": "observe", "step": 5, "url": "http://localhost:5050/", "title": "MeridianCU CoreAdmin", "dialog": null, "scripted": true}
+{"t_ms": 3471, "kind": "observe", "step": 6, "url": "http://localhost:5050/members?q=100042", "title": "MeridianCU CoreAdmin", "dialog": null, "scripted": true}
+{"t_ms": 4072, "kind": "observe", "step": 7, "url": "http://localhost:5050/member/100042", "title": "Jordan Rivera -- MeridianCU CoreAdmin", "dialog": null, "scripted": true}
+{"t_ms": 4669, "kind": "observe", "step": 8, "url": "http://localhost:5050/member/100042/subaccount/new", "title": "MeridianCU CoreAdmin", "dialog": null, "scripted": true}
+{"t_ms": 4717, "kind": "observe", "step": 9, "url": "http://localhost:5050/member/100042/subaccount/new", "title": "MeridianCU CoreAdmin", "dialog": null, "scripted": true}
+{"t_ms": 4753, "kind": "observe", "step": 10, "url": "http://localhost:5050/member/100042/subaccount/new", "title": "MeridianCU CoreAdmin", "dialog": null, "scripted": true}
+{"t_ms": 5391, "kind": "observe", "step": 11, "url": "http://localhost:5050/member/100042/subaccount/new", "title": "MeridianCU CoreAdmin", "dialog": null, "scripted": true}
+{"t_ms": 5435, "kind": "observe", "step": 12, "url": "http://localhost:5050/member/100042/subaccount/new", "title": "MeridianCU CoreAdmin", "dialog": null, "scripted": true}
+{"t_ms": 5438, "kind": "risky_action", "control": "Confirm and create account", "approved": true, "reason": "risky control 'Confirm and create account' matches /(?i)\\b(confirm and create|create account|transfer|post|approve|delete|close account)\\b/ -> confirm"}
+{"t_ms": 6073, "kind": "observe", "step": 13, "url": "http://localhost:5050/member/100042/subaccount/create", "title": "MeridianCU CoreAdmin", "dialog": null, "scripted": true}
+{"t_ms": 6118, "kind": "observe", "step": 14, "url": "http://localhost:5050/member/100042/subaccount/create", "title": "MeridianCU CoreAdmin", "dialog": null, "scripted": true}

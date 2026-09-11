@@ -944,8 +944,8 @@
   },
   "provenance": {
     "discovered_by_model": "scripted",
-    "discovered_at": "2026-09-10T08:09:07+00:00",
-    "trace_hash": "79d7d3be016d080786e9886f25713ada3c9bc0c656dd08dd4ce2b29e3fc64a1d",
+    "discovered_at": "2026-09-11T21:36:26+00:00",
+    "trace_hash": "ebbf441b8f30affa5d38a8206f6815cd2dbf7b8a763a42009e764e3b9b7e5ff7",
     "raw_step_count": 14,
     "stability": null
   }

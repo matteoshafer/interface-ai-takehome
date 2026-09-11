@@ -1,0 +1,30 @@
+{
+  "schema_version": "1.0",
+  "app_id": "cu-coreadmin",
+  "tenant_id": "west",
+  "base_capability_id": "lookup-savings-balance",
+  "description": "Westland FCU ServiceDesk relabels the member-search field; the record grid, headings, and URLs are otherwise identical to the base app, so only the search step's target needs an override.",
+  "entry_suffix": "?tenant=west",
+  "step_overrides": {
+    "s05_enter_member_id": {
+      "target": {
+        "strategies": [
+          {
+            "kind": "role_name",
+            "role": "textbox",
+            "name": "Account Holder # or name",
+            "exact": true,
+            "nth": 0
+          }
+        ],
+        "rationale": "West relabels the search field from 'Member ID' to 'Account Holder #' (mockapp TENANTS['west'].member_label); the base role_name/anchor strategies were recorded against the 'Member ID' label."
+      },
+      "value_ref": null,
+      "risk": null,
+      "post": null,
+      "note": "'Member ID or name' -> 'Account Holder # or name' on this tenant."
+    }
+  },
+  "insert_steps": [],
+  "checkpoint": null
+}

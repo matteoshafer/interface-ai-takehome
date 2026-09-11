@@ -9,8 +9,8 @@
     "username": "<secret>",
     "password": "<redacted:bcd20137>"
   },
-  "started_at": 1789027742.44491,
-  "finished_at": 1789027747.0289652,
+  "started_at": 1789162581.778262,
+  "finished_at": 1789162586.3918679,
   "outcome": "success",
   "summary": "Signed in, opened a Savings sub-account for the member with a 250.00 opening deposit, and confirmed creation.",
   "outputs": {

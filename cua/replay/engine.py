@@ -282,16 +282,27 @@ class ReplayEngine:
                 self._escalate_or_fail(ctx, step,
                                        expected="approved capability + risky-marked step")
 
-        if a.type == "click":
-            self.surface.click(r.handle)
-        elif a.type == "type":
-            self.surface.fill(r.handle, self.cap.render_value(a.value_ref, params))
-        elif a.type == "select":
-            self.surface.select_option(r.handle, self.cap.render_value(a.value_ref, params))
-        elif a.type == "read":
-            self._reads[step.id] = self.surface.read(r.handle)
-        else:
-            raise _Fail("policy_blocked", step.id, "known action type", f"unknown: {a.type}")
+        try:
+            if a.type == "click":
+                self.surface.click(r.handle)
+            elif a.type == "type":
+                self.surface.fill(r.handle, self.cap.render_value(a.value_ref, params))
+            elif a.type == "select":
+                self.surface.select_option(r.handle, self.cap.render_value(a.value_ref, params))
+            elif a.type == "read":
+                self._reads[step.id] = self.surface.read(r.handle)
+            else:
+                raise _Fail("policy_blocked", step.id, "known action type",
+                            f"unknown: {a.type}")
+        except _Fail:
+            raise
+        except Exception as e:
+            # A surface-level failure while acting (e.g. a resolved-but-unusable
+            # handle, a closed page) must become a structured result, never an
+            # uncaught crash -- that's the whole point of the error taxonomy.
+            raise _Fail("action_failed", step.id,
+                        f"{a.type} to succeed on the resolved control",
+                        f"{type(e).__name__}: {e}")
 
         return (r.strategy.kind if r.strategy else "?", r.strategy_index)
 

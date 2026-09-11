@@ -48,7 +48,7 @@
       "name": "savings_balance",
       "type": "number",
       "description": "Value at the 'Current balance' column of the 'Savings' row.",
-      "source_step": "s08_read_savings_balance",
+      "source_step": "s09_capture_savings_balance",
       "read": {
         "target": {
           "strategies": [
@@ -203,7 +203,65 @@
       "timeout_ms": 8000
     },
     {
-      "id": "s03_submit_login",
+      "id": "s03_enter_operator_password",
+      "intent": "enter operator password",
+      "action": {
+        "type": "type",
+        "value_ref": "{{ password }}",
+        "key": null,
+        "ms": null
+      },
+      "target": {
+        "strategies": [
+          {
+            "kind": "role_name",
+            "role": "textbox",
+            "name": "Password",
+            "exact": true,
+            "nth": 0
+          },
+          {
+            "kind": "anchor",
+            "anchor_text": "Password",
+            "control_role": "textbox",
+            "control_name": null
+          },
+          {
+            "kind": "text",
+            "text": "Password",
+            "role": "textbox"
+          },
+          {
+            "kind": "bbox_ratio",
+            "x": 0.2079,
+            "y": 0.2429,
+            "note": "viewport-fraction fallback captured at record time"
+          }
+        ],
+        "rationale": "Primary: accessibility role 'textbox' + name 'Password' -- stable across restyle/markup changes and matches what an operator sees. Fallback: the labelling text, for legacy rows where inputs share a role and carry no name. Last resort: viewport-fraction click point, valid only while the layout is fixed."
+      },
+      "target_rationale": "Primary: accessibility role 'textbox' + name 'Password' -- stable across restyle/markup changes and matches what an operator sees. Fallback: the labelling text, for legacy rows where inputs share a role and carry no name. Last resort: viewport-fraction click point, valid only while the layout is fixed.",
+      "risk": "safe",
+      "phase": "auth",
+      "pre": null,
+      "post": {
+        "kind": "all_of",
+        "of": [
+          {
+            "kind": "url_matches",
+            "pattern": "^/login(\\?|$)"
+          },
+          {
+            "kind": "ax_present",
+            "role": "heading",
+            "name_matches": "^Sign\\ in"
+          }
+        ]
+      },
+      "timeout_ms": 8000
+    },
+    {
+      "id": "s04_submit_login",
       "intent": "submit login",
       "action": {
         "type": "click",
@@ -255,8 +313,8 @@
       "timeout_ms": 8000
     },
     {
-      "id": "s04_search_for_member_by_id",
-      "intent": "search for member by ID",
+      "id": "s05_enter_member_id",
+      "intent": "enter member id",
       "action": {
         "type": "type",
         "value_ref": "{{ member_id }}",
@@ -313,8 +371,8 @@
       "timeout_ms": 8000
     },
     {
-      "id": "s05_search_for_member_100042",
-      "intent": "search for member 100042",
+      "id": "s06_search_for_member",
+      "intent": "search for member",
       "action": {
         "type": "click",
         "value_ref": null,
@@ -365,8 +423,8 @@
       "timeout_ms": 8000
     },
     {
-      "id": "s06_open_member_100042",
-      "intent": "open member 100042",
+      "id": "s07_open_member_record",
+      "intent": "open member record",
       "action": {
         "type": "click",
         "value_ref": null,
@@ -423,50 +481,16 @@
       "timeout_ms": 8000
     },
     {
-      "id": "s07_read_savings_balance",
-      "intent": "read savings balance",
+      "id": "s08_navigate",
+      "intent": "navigate",
       "action": {
-        "type": "read",
-        "value_ref": null,
+        "type": "navigate",
+        "value_ref": "http://localhost:5050/member/{{ member_id }}",
         "key": null,
         "ms": null
       },
-      "target": {
-        "strategies": [
-          {
-            "kind": "cell_at",
-            "row_anchor": "Savings",
-            "column_header": "Current balance",
-            "contains": null
-          },
-          {
-            "kind": "role_name",
-            "role": "cell",
-            "name": "$4215.67",
-            "exact": true,
-            "nth": 0
-          },
-          {
-            "kind": "anchor",
-            "anchor_text": "Savings",
-            "control_role": "cell",
-            "control_name": null
-          },
-          {
-            "kind": "text",
-            "text": "$4215.67",
-            "role": "cell"
-          },
-          {
-            "kind": "bbox_ratio",
-            "x": 0.2299,
-            "y": 0.4227,
-            "note": "viewport-fraction fallback captured at record time"
-          }
-        ],
-        "rationale": "Primary: accessibility role 'cell' + name '$4215.67' -- stable across restyle/markup changes and matches what an operator sees. Fallback: the labelling text, for legacy rows where inputs share a role and carry no name. Last resort: viewport-fraction click point, valid only while the layout is fixed."
-      },
-      "target_rationale": "Primary: accessibility role 'cell' + name '$4215.67' -- stable across restyle/markup changes and matches what an operator sees. Fallback: the labelling text, for legacy rows where inputs share a role and carry no name. Last resort: viewport-fraction click point, valid only while the layout is fixed.",
+      "target": null,
+      "target_rationale": "",
       "risk": "safe",
       "phase": "main",
       "pre": null,
@@ -487,8 +511,8 @@
       "timeout_ms": 8000
     },
     {
-      "id": "s08_read_savings_balance",
-      "intent": "read savings balance",
+      "id": "s09_capture_savings_balance",
+      "intent": "capture savings balance",
       "action": {
         "type": "read",
         "value_ref": null,
@@ -695,9 +719,9 @@
   },
   "provenance": {
     "discovered_by_model": "deepseek-ai/deepseek-v4-pro-0813",
-    "discovered_at": "2026-09-10T08:09:01+00:00",
-    "trace_hash": "72375da572ed9a671229baf32c10454884b5fec940ecfd0e908ca86b0b67a56f",
-    "raw_step_count": 9,
+    "discovered_at": "2026-09-11T21:36:20+00:00",
+    "trace_hash": "a39df00ac35dacbc7ec09a8fc366b1d8bc8f7ea0c832bff8c7501e64f38df1c6",
+    "raw_step_count": 12,
     "stability": null
   }
 }

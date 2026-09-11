@@ -19,7 +19,7 @@ ErrorClass = Literal[
     "selector_missing", "selector_ambiguous", "precondition_failed",
     "postcondition_failed", "checkpoint_failed", "unexpected_dialog",
     "recovery_exhausted", "app_error", "timeout", "policy_blocked",
-    "needs_approval", "bad_params",
+    "needs_approval", "bad_params", "action_failed",
 ]
 
 

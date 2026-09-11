@@ -13,7 +13,7 @@
       "matched_strategy": "role_name",
       "strategy_rank": 0,
       "recoveries": [],
-      "duration_ms": 11,
+      "duration_ms": 17,
       "note": ""
     },
     {
@@ -25,41 +25,53 @@
       "matched_strategy": "role_name",
       "strategy_rank": 0,
       "recoveries": [],
-      "duration_ms": 15,
+      "duration_ms": 17,
       "note": ""
     },
     {
       "index": 2,
-      "step_id": "s03_submit_login",
+      "step_id": "s03_enter_operator_password",
+      "intent": "enter operator password",
+      "action": "type",
+      "status": "ok",
+      "matched_strategy": "role_name",
+      "strategy_rank": 0,
+      "recoveries": [],
+      "duration_ms": 12,
+      "note": ""
+    },
+    {
+      "index": 3,
+      "step_id": "s04_submit_login",
       "intent": "submit login",
       "action": "click",
       "status": "ok",
       "matched_strategy": "role_name",
       "strategy_rank": 0,
       "recoveries": [],
-      "duration_ms": 608,
+      "duration_ms": 599,
       "note": ""
     },
     {
-      "index": 3,
-      "step_id": "s04_search_for_member_by_id",
-      "intent": "search for member by ID",
+      "index": 4,
+      "step_id": "s05_enter_member_id",
+      "intent": "enter member id",
       "action": "type",
       "status": "ok",
       "matched_strategy": "role_name",
       "strategy_rank": 0,
       "recoveries": [],
-      "duration_ms": 13,
+      "duration_ms": 15,
       "note": ""
     }
   ],
-  "duration_ms": 1793,
+  "duration_ms": 1818,
   "outputs": null,
   "business_outcome": "member_not_found",
   "business_data": {
     "found": false
   },
-  "at_step": "s05_search_for_member_100042",
+  "at_step": "s06_search_for_member",
   "error_class": null,
   "failed_step": null,
   "expected": null,

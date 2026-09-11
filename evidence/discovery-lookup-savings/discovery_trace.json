@@ -8,10 +8,10 @@
     "username": "<secret>",
     "password": "<redacted:bcd20137>"
   },
-  "started_at": 1789026787.1495628,
-  "finished_at": 1789027740.938962,
+  "started_at": 1789160421.681772,
+  "finished_at": 1789162579.623401,
   "outcome": "success",
-  "summary": "Member 100042 (Jordan Rivera) savings balance is $4215.67.",
+  "summary": "Found member 100042 (Jordan Rivera) and read their savings balance.",
   "outputs": {
     "savings_balance": "$4215.67"
   },
@@ -79,6 +79,36 @@
     },
     {
       "index": 3,
+      "tool": "type_text",
+      "intent": "enter operator password",
+      "target": "textbox:Password",
+      "tool_input": {
+        "role": "textbox",
+        "name": "Password",
+        "why": "enter operator password",
+        "text": "<redacted>"
+      },
+      "resolved": true,
+      "matched_strategy": "role_name",
+      "strategy_index": 0,
+      "policy_decision": "allow",
+      "error": null,
+      "obs_after": {
+        "url": "http://localhost:5050/login?expired=1",
+        "title": "MeridianCU CoreAdmin",
+        "http_status": 200,
+        "dialog": null,
+        "headings": [
+          "Sign in"
+        ],
+        "alerts": [
+          "status: Your session has expired. Please sign in again."
+        ],
+        "node_count": 5
+      }
+    },
+    {
+      "index": 4,
       "tool": "click",
       "intent": "submit login",
       "target": "button:Sign in",
@@ -106,14 +136,14 @@
       }
     },
     {
-      "index": 4,
+      "index": 5,
       "tool": "type_text",
-      "intent": "search for member by ID",
+      "intent": "enter member id",
       "target": "textbox:Member ID or name",
       "tool_input": {
         "role": "textbox",
         "name": "Member ID or name",
-        "why": "search for member by ID",
+        "why": "enter member id",
         "text": "<redacted>"
       },
       "resolved": true,
@@ -135,14 +165,29 @@
       }
     },
     {
-      "index": 5,
+      "index": 6,
+      "tool": "navigate",
+      "intent": "",
+      "target": null,
+      "tool_input": {
+        "url": "http://localhost:5050/members/100042"
+      },
+      "resolved": false,
+      "matched_strategy": null,
+      "strategy_index": null,
+      "policy_decision": "block",
+      "error": "route not allowlisted: http://localhost:5050/members/100042",
+      "obs_after": null
+    },
+    {
+      "index": 7,
       "tool": "click",
-      "intent": "search for member 100042",
+      "intent": "search for member",
       "target": "button:Search",
       "tool_input": {
         "role": "button",
         "name": "Search",
-        "why": "search for member 100042"
+        "why": "search for member"
       },
       "resolved": true,
       "matched_strategy": "role_name",
@@ -162,14 +207,29 @@
       }
     },
     {
-      "index": 6,
+      "index": 8,
+      "tool": "navigate",
+      "intent": "",
+      "target": null,
+      "tool_input": {
+        "url": "http://localhost:5050/members/100042"
+      },
+      "resolved": false,
+      "matched_strategy": null,
+      "strategy_index": null,
+      "policy_decision": "block",
+      "error": "route not allowlisted: http://localhost:5050/members/100042",
+      "obs_after": null
+    },
+    {
+      "index": 9,
       "tool": "click",
-      "intent": "open member 100042",
+      "intent": "open member record",
       "target": "link:Open",
       "tool_input": {
         "role": "link",
         "name": "Open",
-        "why": "open member 100042"
+        "why": "open member record"
       },
       "resolved": true,
       "matched_strategy": "role_name",
@@ -190,15 +250,41 @@
       }
     },
     {
-      "index": 7,
+      "index": 10,
+      "tool": "navigate",
+      "intent": "",
+      "target": null,
+      "tool_input": {
+        "url": "http://localhost:5050/member/100042"
+      },
+      "resolved": false,
+      "matched_strategy": null,
+      "strategy_index": null,
+      "policy_decision": "allow",
+      "error": null,
+      "obs_after": {
+        "url": "http://localhost:5050/member/100042",
+        "title": "Jordan Rivera -- MeridianCU CoreAdmin",
+        "http_status": 200,
+        "dialog": null,
+        "headings": [
+          "Member 100042 \u2014 Jordan Rivera",
+          "Accounts"
+        ],
+        "alerts": [],
+        "node_count": 22
+      }
+    },
+    {
+      "index": 11,
       "tool": "read_value",
-      "intent": "read savings balance",
+      "intent": "capture savings balance",
       "target": "cell:$4215.67",
       "tool_input": {
         "label": "savings_balance",
         "role": "cell",
         "name": "$4215.67",
-        "why": "read savings balance"
+        "why": "capture savings balance"
       },
       "resolved": true,
       "matched_strategy": "cell_at",
@@ -219,36 +305,7 @@
       }
     },
     {
-      "index": 8,
-      "tool": "read_value",
-      "intent": "read savings balance",
-      "target": "cell:$4215.67",
-      "tool_input": {
-        "label": "savings_balance",
-        "role": "cell",
-        "name": "$4215.67",
-        "why": "read savings balance"
-      },
-      "resolved": true,
-      "matched_strategy": "cell_at",
-      "strategy_index": 0,
-      "policy_decision": "allow",
-      "error": null,
-      "obs_after": {
-        "url": "http://localhost:5050/member/100042",
-        "title": "Jordan Rivera -- MeridianCU CoreAdmin",
-        "http_status": 200,
-        "dialog": null,
-        "headings": [
-          "Member 100042 \u2014 Jordan Rivera",
-          "Accounts"
-        ],
-        "alerts": [],
-        "node_count": 22
-      }
-    },
-    {
-      "index": 9,
+      "index": 12,
       "tool": "finish",
       "intent": "",
       "target": null,
@@ -256,7 +313,7 @@
         "outputs": {
           "savings_balance": "$4215.67"
         },
-        "summary": "Member 100042 (Jordan Rivera) savings balance is $4215.67."
+        "summary": "Found member 100042 (Jordan Rivera) and read their savings balance."
       },
       "resolved": false,
       "matched_strategy": null,

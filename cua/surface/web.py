@@ -15,6 +15,7 @@ ARIA-aware ``get_by_role`` locators.
 from __future__ import annotations
 
 import os
+import platform
 import re
 from typing import Optional
 
@@ -51,6 +52,10 @@ _BROWSER_CANDIDATES = [
     "/Applications/Brave Browser.app/Contents/MacOS/Brave Browser",
     "/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge",
 ]
+
+
+def _is_mac() -> bool:
+    return platform.system() == "Darwin"
 
 
 def _find_browser() -> Optional[str]:
@@ -341,15 +346,36 @@ class WebSurface:
         self._settle()
 
     def fill(self, handle: object, text: str) -> None:
+        if isinstance(handle, tuple) and handle and handle[0] == "point":
+            # bbox_ratio fallback: no element handle, just a screen location --
+            # click to focus whatever's there, then type via the keyboard. This
+            # is the genuine screenshot+coordinate path (the seam a vision-only
+            # surface would use throughout), not a special case of "type".
+            self.click_point(handle[1], handle[2])
+            self.page.keyboard.press("Meta+A" if _is_mac() else "Control+A")
+            self.page.keyboard.type(text)
+            return
         handle.fill(text, timeout=6000)
 
     def select_option(self, handle: object, value: str) -> None:
+        if isinstance(handle, tuple) and handle and handle[0] == "point":
+            # Choosing a specific <option> needs a real element handle -- a bare
+            # coordinate can open a dropdown but can't name which option to pick.
+            # Fail clearly rather than click blindly; the replay engine turns
+            # this into a debuggable `action_failed`, never a crash.
+            raise RuntimeError(
+                "select_option has no element handle to act on -- only a "
+                "bbox_ratio fallback resolved, which cannot choose an option")
         try:
             handle.select_option(label=value, timeout=6000)
         except Exception:
             handle.select_option(value=value, timeout=6000)
 
     def read(self, handle: object) -> str:
+        if isinstance(handle, tuple) and handle and handle[0] == "point":
+            raise RuntimeError(
+                "read has no element handle to extract from -- only a "
+                "bbox_ratio fallback resolved, which cannot read a value")
         try:
             tag = (handle.evaluate("el => el.tagName") or "").lower()
         except Exception:

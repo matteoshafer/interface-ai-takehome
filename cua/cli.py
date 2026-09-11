@@ -145,6 +145,16 @@ def cmd_discover(args) -> int:
 def cmd_replay(args) -> int:
     load_dotenv(REPO / ".env")
     cap = store.load(args.capability)
+
+    if args.tenant or args.overlay:
+        from cua.artifact.tenant_overlay import (apply_overlay, load_overlay,
+                                                  overlay_path)
+        ov_path = args.overlay or overlay_path(args.tenant, cap.id)
+        overlay = load_overlay(ov_path)
+        cap = apply_overlay(cap, overlay)
+        print(f" * applied overlay {ov_path} -> tenant={cap.target.tenant_id} "
+              f"(base {args.capability} v{cap.version})")
+
     policy_path = args.policy or (REPO / cap.policy_ref)
     policy = PolicyConfig.load(policy_path)
     redactor = Redactor(policy)
@@ -294,6 +304,11 @@ def build_parser() -> argparse.ArgumentParser:
     r.add_argument("--escalate-timeout", type=float, default=None)
     r.add_argument("--evidence-name", default=None,
                    help="fixed name for the evidence/ run directory")
+    r.add_argument("--tenant", default=None,
+                   help="apply the tenant overlay at overlays/<tenant>/<capability id>.json "
+                        "before replay -- the base artifact is never re-recorded")
+    r.add_argument("--overlay", default=None,
+                   help="explicit overlay file (overrides --tenant's default path)")
     r.set_defaults(func=cmd_replay)
 
     c = sub.add_parser("catalog", help="list / invoke saved capabilities")

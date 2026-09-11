@@ -65,3 +65,30 @@ def test_parameterize_then_render_roundtrip():
     assert p.strategies[0].anchor_text == "{{ member_id }}"
     back = render_target(p, {"member_id": "999999"})
     assert back.strategies[0].anchor_text == "999999"
+
+
+def test_bbox_ratio_handle_types_via_click_and_keyboard(surface, mock_base_url):
+    """The last-resort strategy still has to actually work for `type` -- there's
+    no element handle, just a screen location, so this is real screenshot+
+    coordinate automation, not a stub."""
+    _login(surface, mock_base_url)
+    o = surface.observe()
+    r = resolve(surface, Target(strategies=[
+        RoleName(role="textbox", name="Member ID or name")]), o)
+    box = r.handle.bounding_box()
+    w, h = o.viewport
+    point = ("point", (box["x"] + box["width"] / 2) / w, (box["y"] + box["height"] / 2) / h)
+    surface.fill(point, "100042")
+    assert surface.page.locator("#q").input_value() == "100042"
+
+
+def test_bbox_ratio_handle_cannot_select_or_read(surface, mock_base_url):
+    """select_option and read need a real element handle; a bare coordinate
+    must fail loudly (caught by the replay engine as `action_failed`), never
+    silently misbehave or crash with an unrelated AttributeError."""
+    _login(surface, mock_base_url)
+    point = ("point", 0.5, 0.5)
+    with pytest.raises(RuntimeError, match="select_option"):
+        surface.select_option(point, "x")
+    with pytest.raises(RuntimeError, match="read"):
+        surface.read(point)

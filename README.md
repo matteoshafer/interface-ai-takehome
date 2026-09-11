@@ -104,11 +104,45 @@ python -m cua.cli replay capabilities/lookup-savings-balance.json \
 # browser window if needed, click "Resume automation" -> B restores position and finishes.
 # demo/escalation_demo.py runs the whole handoff self-contained (auto-operator).
 
-# 5. CATALOG — saved capabilities as an agent-invocable tool surface
+# 5. CROSS-TENANT REUSE — the same artifact, a second tenant, no re-recording
+python -m cua.cli replay capabilities/lookup-savings-balance.json \
+  --tenant west --param member_id=100042 --serve-mock
+# -> SUCCESS  (Westland FCU relabels the search field; overlays/west/*.json
+#    is the only thing that changed -- see demo/tenant_overlay_demo.py for the
+#    full 3-way comparison, incl. what happens with NO overlay at all)
+
+# 6. CATALOG — saved capabilities as an agent-invocable tool surface
 python -m cua.cli catalog                      # human-readable
 python -m cua.cli catalog --json               # tool/function schemas
 python -m cua.cli catalog --invoke lookup-savings-balance --param member_id=100042 --serve-mock
 ```
+
+## Robustness matrix
+
+Every branch of the error taxonomy (`REPORT.md` sec. 3), with the exact command
+that reproduces it and where its evidence lives:
+
+| result | error_class / outcome | reproduce | evidence |
+|---|---|---|---|
+| success | — | `replay lookup-savings-balance.json --param member_id=100042` | `evidence/replay-success/` |
+| business outcome | `member_not_found` | `... --param member_id=999999` | `evidence/replay-business-not-found/` |
+| business outcome | `permission_denied` | `... --param member_id=100999` | `evidence/replay-business-permission/` |
+| recovered → success | `maintenance_notice` (dialog) | `... --param member_id=100042 --inject dialog` | `evidence/replay-recovered-dialog/` |
+| recovered → success | `session_timeout` (re-auth) | `... --param member_id=100042 --inject timeout` | `evidence/replay-recovered-timeout/` |
+| hard failure | `app_error` (HTTP 500) | `... --param member_id=100042 --inject error` | `evidence/replay-hard-failure-app-error/` (screenshot + AX snapshot) |
+| hard failure | `bad_params` | `... --param member_id=abc` | fails before touching the UI |
+| hard failure | `needs_approval` | `replay open-savings-subaccount.json ... ` (no `--approve`) | `evidence/replay-safety-risky-unapproved/` |
+| hard failure | `action_failed` | a resolved-but-unusable control (e.g. `select`/`read` against a `bbox_ratio`-only match) | `tests/test_targeting.py`, `cua/surface/web.py` |
+| escalation | `replay_failure` → human resumes | `demo/escalation_demo.py` | `evidence/escalation-handoff/` |
+| drift signal | fall-through to a weaker locator strategy | `demo/tenant_overlay_demo.py` (unmodified capability vs. a relabeled tenant) | `evidence/replay-tenant-west-no-overlay/` |
+
+`checkpoint_failed` and `unexpected_dialog` are exercised directly in
+`tests/test_errors.py` (synthetic observations) and `tests/test_compile_replay.py`
+(live). `selector_missing`/`selector_ambiguous` share the resolver code path
+tested in `tests/test_targeting.py`. `precondition_failed`, `policy_blocked`,
+`timeout`, and `recovery_exhausted` all raise through the same single `_Fail(...)`
+call site each of the rows above already exercises — they are reachable, typed
+outcomes rather than separately demonstrated scenarios.
 
 ## Running without live services
 
@@ -116,8 +150,8 @@ python -m cua.cli catalog --invoke lookup-savings-balance --param member_id=1000
 **never** the LLM. The test suite runs the mock app in-process too:
 
 ```bash
-pytest -m "not integration"     # 28 unit tests, no browser (~0.5s)
-pytest -m integration           # 21 tests, needs a browser (~90s)
+pytest -m "not integration"     # 32 unit tests, no browser (~0.5s)
+pytest -m integration           # 25 tests, needs a browser (~100s)
 ```
 
 `tests/test_llm_adapters.py` round-trips the neutral transcript through both real
@@ -143,15 +177,17 @@ cua/
   targeting/    ordered, robustness-ranked locator strategies + resolver
   policy/       allowlist enforcement, risk classification, redaction
   agent/        the LLM observe->decide->act loop (+ an offline scripted driver)
-  artifact/     the capability schema (focal point), compiler, store, curated library
+  artifact/     the capability schema (focal point), compiler, store, curated library,
+                tenant_overlay.py (cross-tenant reuse: merge, never re-record)
   replay/       deterministic engine, error taxonomy, result contract
   escalation/   session manager, intervention queue, control ledger, operator console
   cli.py        discover | replay | catalog | operator
-mockapp/        the legacy credit-union admin proxy target
+mockapp/        the legacy credit-union admin proxy target (+ a `?tenant=west` variant)
 capabilities/   compiled artifacts
+overlays/       <tenant>/<capability id>.json — per-tenant deltas, not re-recordings
 policies/       creditunion.yaml — the allowlist + risk + redaction config
-evidence/       discovery + replay + escalation run evidence
-demo/           scripted action lists + evidence/escalation scripts
+evidence/       discovery + replay + escalation + cross-tenant run evidence
+demo/           scripted action lists, escalation + cross-tenant-reuse demo scripts
 ```
 
 ## Demo video

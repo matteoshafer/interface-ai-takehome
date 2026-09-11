@@ -37,6 +37,24 @@ identical observe/act/record machinery.
 Each holds `run.jsonl`, `result.json` (the structured result contract), and — on
 failure — `failure.png` + `observation.json` (full AX snapshot + page text).
 
+## Cross-tenant reuse (`demo/tenant_overlay_demo.py`)
+
+`lookup-savings-balance` was recorded once. These three replay it, unmodified,
+against a second tenant (`?tenant=west` — Westland FCU relabels the
+member-search field from "Member ID" to "Account Holder #") to show reuse
+without re-recording, and what the drift signal looks like before you add
+anything:
+
+| dir | run | search-field targeting |
+|---|---|---|
+| `replay-tenant-core/` | base capability, base (core) tenant — the control | `role_name` (rank 0) |
+| `replay-tenant-west-no-overlay/` | base capability, **west**, no overlay | falls through to `bbox_ratio` (rank 3) — the drift signal |
+| `replay-tenant-west/` | base capability **+ `overlays/west/lookup-savings-balance.json`**, west | `role_name` restored (rank 0) |
+
+All three return the identical output (`{savings_balance: 4215.67}`); only the
+targeting robustness differs. The overlay (a single `step_overrides` entry, no
+re-recording) is what moves the search step from rank 3 back to rank 0.
+
 ## Escalation & handoff
 
 `escalation-handoff/` — a replay hits an injected HTTP 500, files an intervention

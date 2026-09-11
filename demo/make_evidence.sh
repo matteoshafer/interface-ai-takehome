@@ -65,4 +65,7 @@ run "safety-risky-approved"   capabilities/open-savings-subaccount.json --param 
 echo "## 3. escalation + handoff"
 $PY demo/escalation_demo.py
 
+echo "## 4. cross-tenant reuse — same artifact, no re-recording"
+PYTHONPATH=. $PY demo/tenant_overlay_demo.py 2>&1 | grep -vE "GET |POST |127.0.0.1 - -"
+
 echo; echo "done ($MODE discovery) -> $E/"

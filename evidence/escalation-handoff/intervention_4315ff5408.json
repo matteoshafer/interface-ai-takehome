@@ -1,24 +1,24 @@
 {
   "request": {
-    "id": "89edabd5d5",
-    "created_at": "2026-09-10T08:09:54+00:00",
+    "id": "4315ff5408",
+    "created_at": "2026-09-11T21:37:11+00:00",
     "kind": "replay_failure",
     "reason": "HTTP 500",
     "url": "http://localhost:5050/member/100042",
     "capability": "lookup-savings-balance",
     "goal": null,
-    "step": "s06_open_member_100042",
+    "step": "s07_open_member_record",
     "ax_digest": "url=http://localhost:5050/member/100042 title='MeridianCU CoreAdmin' headings=['Application error'] dialog=None http=500",
     "screenshot": "/Users/matteoshafer/computer-use-automation/evidence/escalation-handoff/intervention_replay_failure.png",
     "run_dir": "/Users/matteoshafer/computer-use-automation/evidence/escalation-handoff",
     "status": "open"
   },
   "response": {
-    "id": "89edabd5d5",
+    "id": "4315ff5408",
     "decision": "resume",
     "note": "Cleared the error and returned to the member record.",
     "operator": "operator",
-    "resolved_at": "2026-09-10T08:09:55+00:00"
+    "resolved_at": "2026-09-11T21:37:12+00:00"
   },
   "state_before": "url=http://localhost:5050/member/100042 title='MeridianCU CoreAdmin' headings=['Application error'] dialog=None http=500",
   "state_after": "url=http://localhost:5050/member/100042 headings=['Application error']"
