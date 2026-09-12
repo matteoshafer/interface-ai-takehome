@@ -7,6 +7,7 @@ import {
   DiscoveryScene,
   ArtifactScene,
   ReplayScene,
+  TenantScene,
   EscalationScene,
   CloseScene,
 } from './scenes';
@@ -17,6 +18,7 @@ const ORDER: [keyof typeof SCENES, React.FC][] = [
   ['discovery', DiscoveryScene],
   ['artifact', ArtifactScene],
   ['replay', ReplayScene],
+  ['tenant', TenantScene],
   ['escalation', EscalationScene],
   ['close', CloseScene],
 ];

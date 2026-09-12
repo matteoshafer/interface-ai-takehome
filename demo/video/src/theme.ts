@@ -27,6 +27,7 @@ export const SCENES = {
   discovery: 19,
   artifact: 13,
   replay: 16,
+  tenant: 13,
   escalation: 11,
   close: 5,
 };

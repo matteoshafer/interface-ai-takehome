@@ -192,9 +192,10 @@ demo/           scripted action lists, escalation + cross-tenant-reuse demo scri
 
 ## Demo video
 
-`evidence/demo.mp4` — a ~75s walkthrough (problem → discovery → artifact →
-replay's three result shapes → escalation handoff), built with Remotion from the
-real evidence screenshots. Source + build instructions in `demo/video/`.
+`evidence/demo.mp4` — a ~88s walkthrough (problem → discovery → artifact →
+replay's three result shapes → cross-tenant reuse → escalation handoff), built
+with Remotion from the real evidence screenshots. Source + build instructions
+in `demo/video/`.
 
 See `REPORT.md` for the design, the schema, the determinism/error model, the
 heterogeneity & multi-tenant story, and what was deliberately cut.

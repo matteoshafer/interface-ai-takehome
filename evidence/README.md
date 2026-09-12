@@ -65,4 +65,5 @@ note + before/after state), and the screenshots.
 
 ## Demo video
 
-`demo.mp4` — a ~75s Remotion walkthrough built from these screenshots.
+`demo.mp4` — a ~88s Remotion walkthrough built from these screenshots, including
+the cross-tenant reuse run above.

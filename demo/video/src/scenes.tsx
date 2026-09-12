@@ -131,7 +131,7 @@ export const DiscoveryScene: React.FC = () => {
           <Browser src={step.shot} url={step.url} width={1080} />
         </div>
         <div style={{display: 'flex', flexDirection: 'column', gap: 18, flex: 1}}>
-          <Body size={24}>observe → decide → act, {STEPS.length} of ~8 steps shown</Body>
+          <Body size={24}>observe → decide → act, {STEPS.length} of 9 steps shown</Body>
           {STEPS.map((s, i) => (
             <div
               key={s.shot}
@@ -153,7 +153,7 @@ export const DiscoveryScene: React.FC = () => {
           <div style={{marginTop: 14, opacity: interpolate(frame, [per * 3.4, per * 3.8], [0, 1], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'})}}>
             <Panel accent={c.good} title="finish">
               <span style={{fontSize: 22}}>
-                outputs = &#123; savings_balance: 4215.67, member_status: "Active" &#125;
+                outputs = &#123; savings_balance: 4215.67 &#125;
               </span>
             </Panel>
           </div>
@@ -168,7 +168,7 @@ export const ArtifactScene: React.FC = () => {
   const frame = useCurrentFrame();
   const rows = [
     ['parameters', 'member_id  string  /^\\d{4,9}$/  pii', 'username / password  secret', 10],
-    ['outputs', 'savings_balance  number', 'member_status  string', 26],
+    ['outputs', 'savings_balance  number', 'typed, with a declared read strategy', 26],
     ['steps[].target', 'cell_at → role_name → anchor → text → bbox_ratio', 'ordered, strongest first; replay logs which matched', 42],
     ['checkpoint', 'url ~ /member/\\d+  AND  heading ~ "Member \\d+"', 'asserted after the last step', 58],
     ['known_outcomes', 'member_not_found → { found: false }', 'permission_denied → { permitted: false }', 74],
@@ -228,7 +228,7 @@ const RESULTS = [
     label: 'member 100042',
     accent: c.good,
     tag: 'success',
-    body: 'outputs = { savings_balance: 4215.67, member_status: "Active" }',
+    body: 'outputs = { savings_balance: 4215.67 }',
     delay: 12,
   },
   {
@@ -331,6 +331,76 @@ export const ReplayScene: React.FC = () => {
   );
 };
 
+/* --------------------------------------------------------- Cross-tenant */
+export const TenantScene: React.FC = () => {
+  const frame = useCurrentFrame();
+  const {fps} = useVideoConfig();
+  const rows = [
+    {label: 'core tenant (control)', accent: c.good, rank: 'role_name — rank 0',
+     detail: 'the field is "Member ID or name"', at: 40},
+    {label: 'west tenant, NO overlay', accent: c.warn, rank: 'bbox_ratio — rank 3',
+     detail: '"Account Holder # or name" — role_name misses, falls through to a screen coordinate', at: 70},
+    {label: 'west tenant + overlay', accent: c.good, rank: 'role_name — rank 0',
+     detail: 'a 4-line step_overrides entry — no re-recording', at: 100},
+  ];
+  return (
+    <AbsoluteFill style={{background: c.bg, padding: 90}}>
+      <FadeIn delay={2}>
+        <Kicker>5 · cross-tenant reuse — no re-recording</Kicker>
+      </FadeIn>
+      <FadeIn delay={8}>
+        <H1 size={42}>
+          One capability, recorded once, reused across institutions.
+        </H1>
+      </FadeIn>
+      <div style={{display: 'flex', gap: 60, marginTop: 36, alignItems: 'flex-start'}}>
+        <div
+          style={{
+            opacity: interpolate(frame, [16, 34], [0, 1], {extrapolateRight: 'clamp'}),
+          }}
+        >
+          <Browser src="tenant-west-home.png"
+                   url="localhost:5050/?tenant=west  (Westland FCU)" width={860} />
+        </div>
+        <div style={{flex: 1, display: 'flex', flexDirection: 'column', gap: 16}}>
+          <Body size={24}>
+            Westland FCU relabels the search field. Same replay, same capability:
+          </Body>
+          {rows.map((r) => {
+            const s = spring({frame: frame - r.at, fps, config: {damping: 200}});
+            return (
+              <div
+                key={r.label}
+                style={{
+                  opacity: s,
+                  transform: `translateX(${interpolate(s, [0, 1], [-24, 0])}px)`,
+                  border: `1px solid ${c.border}`,
+                  borderLeft: `4px solid ${r.accent}`,
+                  borderRadius: 8,
+                  padding: '14px 20px',
+                  fontFamily: mono,
+                }}
+              >
+                <div style={{fontSize: 22, color: c.dim}}>{r.label}</div>
+                <div style={{fontSize: 23, color: r.accent, fontWeight: 700, marginTop: 2}}>
+                  {r.rank}
+                </div>
+                <div style={{fontSize: 18, color: c.code, marginTop: 3}}>{r.detail}</div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+      <FadeIn delay={130} style={{marginTop: 30}}>
+        <Body size={24}>
+          The fall-through rank <i>is</i> the drift signal — sustained rank &gt; 0
+          for a tenant flags "specialize"; the overlay is the fix, not a re-record.
+        </Body>
+      </FadeIn>
+    </AbsoluteFill>
+  );
+};
+
 /* ----------------------------------------------------------- Escalation */
 export const EscalationScene: React.FC = () => {
   const frame = useCurrentFrame();
@@ -343,7 +413,7 @@ export const EscalationScene: React.FC = () => {
   return (
     <AbsoluteFill style={{background: c.bg, padding: 90}}>
       <FadeIn delay={2}>
-        <Kicker>4 · escalation & handoff</Kicker>
+        <Kicker>6 · escalation & handoff</Kicker>
       </FadeIn>
       <FadeIn delay={8}>
         <H1 size={44}>
@@ -402,14 +472,14 @@ export const CloseScene: React.FC = () => (
       <Kicker>one vertical slice, all the way through</Kicker>
     </FadeIn>
     <FadeIn delay={10}>
-      <H1 size={52}>
-        goal → LLM run → capability → deterministic replay → human handoff
+      <H1 size={48}>
+        goal → LLM run → capability → deterministic replay → cross-tenant reuse → human handoff
       </H1>
     </FadeIn>
     <FadeIn delay={22}>
       <div style={{display: 'flex', flexDirection: 'column', gap: 12, fontFamily: mono, fontSize: 27, color: c.dim}}>
-        <span><b style={{color: c.text}}>49</b> tests &nbsp;·&nbsp; unit + integration</span>
-        <span><b style={{color: c.text}}>8</b> replay scenarios + an escalation handoff in <span style={{color: c.code}}>/evidence</span></span>
+        <span><b style={{color: c.text}}>58</b> tests &nbsp;·&nbsp; unit + integration</span>
+        <span><b style={{color: c.text}}>8</b> replay scenarios + a cross-tenant demo + an escalation handoff, all in <span style={{color: c.code}}>/evidence</span></span>
         <span>provider-agnostic discovery &nbsp;·&nbsp; Claude &nbsp;·&nbsp; NVIDIA NIM &nbsp;·&nbsp; OpenAI</span>
       </div>
     </FadeIn>
